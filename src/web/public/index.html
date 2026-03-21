@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXUS Dashboard - Unified AI Agent Platform</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔮</text></svg>">
+</head>
+<body>
+  <div class="grid-bg"></div>
+  <div class="scanlines"></div>
+  
+  <header>
+    <div class="logo">
+      NEXUS
+      <span class="logo-sub">UNIFIED AI AGENT PLATFORM v2.0</span>
+    </div>
+    
+    <div class="connection-status">
+      <div class="connection-dot" id="connection-dot"></div>
+      <span id="connection-text">Disconnected</span>
+    </div>
+    
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-value" id="stat-agents">0/6</div>
+        <div class="stat-label">Active Agents</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="stat-tasks">0</div>
+        <div class="stat-label">Tasks Done</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="stat-providers">0</div>
+        <div class="stat-label">Providers Online</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="stat-uptime">00:00:00</div>
+        <div class="stat-label">Uptime</div>
+      </div>
+    </div>
+  </header>
+  
+  <div class="container">
+    <div class="main-grid">
+      <!-- Left Column -->
+      <div class="left-column">
+        <!-- Agent Roster -->
+        <div class="panel">
+          <div class="panel-header">
+            <span><span class="panel-header-icon">🤖</span>AGENT ROSTER</span>
+            <span id="agent-count">6 agents</span>
+          </div>
+          <div class="panel-body">
+            <div class="agents-grid" id="agents-grid"></div>
+          </div>
+        </div>
+        
+        <!-- Task Input Form -->
+        <div class="panel">
+          <div class="panel-header">
+            <span><span class="panel-header-icon">⚡</span>EXECUTE TASK</span>
+          </div>
+          <div class="panel-body">
+            <form class="task-form" id="task-form">
+              <div class="input-group">
+                <label>SELECT AGENT</label>
+                <select id="agent-select">
+                  <option value="NEXUS-1">🔮 NEXUS - Platform Core</option>
+                  <option value="CODEX">💻 CODEX - Code Architect</option>
+                  <option value="AURORA">🌟 AURORA - Research Lead</option>
+                  <option value="GHOST">👻 GHOST - System Ops</option>
+                  <option value="ORACLE">🎯 ORACLE - Analysis</option>
+                  <option value="WRAITH">⚡ WRAITH - Speed Runner</option>
+                  <option value="ALL">🚀 ALL AGENTS (Parallel)</option>
+                </select>
+              </div>
+              
+              <div class="input-group">
+                <label>PROVIDER</label>
+                <select id="provider-select">
+                  <option value="auto">🎯 AUTO (Smart Routing)</option>
+                  <option value="opencode">☁️ OpenCode (Cloud)</option>
+                  <option value="claude">🤖 Claude Code (Cloud)</option>
+                  <option value="ollama">🏠 Ollama (Local)</option>
+                  <option value="anthropic">🧠 Anthropic API</option>
+                  <option value="openai">💡 OpenAI API</option>
+                </select>
+              </div>
+              
+              <div class="input-group">
+                <label>TASK / PROMPT</label>
+                <textarea id="task-input" placeholder="Enter your task or question here...
+
+Examples:
+• Write a Python function to calculate fibonacci numbers
+• Research the latest AI breakthroughs in 2026
+• Analyze this code and suggest improvements
+• Explain quantum computing in simple terms"></textarea>
+              </div>
+              
+              <div class="btn-grid">
+                <button type="button" class="btn green" onclick="executeTask()">
+                  ▶ EXECUTE
+                </button>
+                <button type="button" class="btn purple" onclick="executeAll()">
+                  ◆ EXECUTE ALL
+                </button>
+              </div>
+              <button type="button" class="btn amber full" onclick="streamTask()">
+                ◉ STREAM RESPONSE
+              </button>
+            </form>
+            
+            <div class="result-container" id="result-container">
+              <div class="result-header">
+                <span class="result-agent" id="result-agent">Agent</span>
+                <span class="result-meta" id="result-meta"></span>
+              </div>
+              <div class="result-content" id="result-content"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Right Column -->
+      <div class="right-column">
+        <!-- Performance Metrics -->
+        <div class="panel">
+          <div class="panel-header">
+            <span><span class="panel-header-icon">📊</span>PERFORMANCE METRICS</span>
+            <button class="btn btn-sm" onclick="resetMetrics()">RESET</button>
+          </div>
+          <div class="panel-body">
+            <div class="metrics-grid">
+              <div class="metric-card">
+                <div class="metric-value" id="metric-tasks-min">0.0</div>
+                <div class="metric-label">Tasks/Min</div>
+                <div class="metric-trend neutral" id="metric-tasks-trend">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value" id="metric-avg-response">0ms</div>
+                <div class="metric-label">Avg Response</div>
+                <div class="metric-trend neutral" id="metric-response-trend">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value" id="metric-success-rate">100%</div>
+                <div class="metric-label">Success Rate</div>
+                <div class="metric-trend neutral" id="metric-success-trend">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value" id="metric-total-tokens">0</div>
+                <div class="metric-label">Total Tokens</div>
+                <div class="metric-trend neutral" id="metric-tokens-trend">—</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Live Task Feed -->
+        <div class="panel">
+          <div class="panel-header">
+            <span><span class="panel-header-icon">📡</span>LIVE TASK FEED</span>
+            <div class="btn-group">
+              <button class="btn btn-sm" onclick="clearFeed()">CLEAR</button>
+              <button class="btn btn-sm" onclick="toggleFeedPause()">⏸ PAUSE</button>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="task-feed" id="task-feed">
+              <div class="feed-item completed">
+                <div class="feed-header">
+                  <span class="feed-task-id">#INIT-001</span>
+                  <span class="feed-time">System Ready</span>
+                </div>
+                <div class="feed-agent" style="--agent-color: var(--cyan)">SYSTEM</div>
+                <div class="feed-description">NEXUS Dashboard initialized successfully</div>
+                <span class="feed-status completed">ready</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- AI Providers -->
+        <div class="panel">
+          <div class="panel-header">
+            <span><span class="panel-header-icon">☁️</span>AI PROVIDERS</span>
+            <button class="btn btn-sm" onclick="checkProviders()">REFRESH</button>
+          </div>
+          <div class="panel-body">
+            <div class="providers-grid" id="providers-grid"></div>
+          </div>
+        </div>
+        
+        <!-- System Log -->
+        <div class="panel">
+          <div class="panel-header">
+            <span><span class="panel-header-icon">📋</span>SYSTEM LOG</span>
+            <button class="btn btn-sm" onclick="clearLog()">CLEAR</button>
+          </div>
+          <div class="panel-body">
+            <div class="log-container" id="log-container"></div>
+          </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="panel">
+          <div class="panel-header">
+            <span><span class="panel-header-icon">🚀</span>QUICK ACTIONS</span>
+          </div>
+          <div class="panel-body">
+            <div class="quick-actions">
+              <button class="btn full" onclick="quickTask('What are the latest AI breakthroughs in 2026?')">
+                🔬 AI Research
+              </button>
+              <button class="btn full" onclick="quickTask('Write a Python function to sort a list using quicksort')">
+                💻 Write Code
+              </button>
+              <button class="btn full" onclick="quickTask('Explain quantum computing in simple terms')">
+                🧠 Explain Concept
+              </button>
+              <button class="btn full" onclick="quickTask('Analyze this code and find potential bugs')">
+                🔍 Code Review
+              </button>
+              <button class="btn full" onclick="quickTask('Create a REST API endpoint for user authentication')">
+                🛠️ Build API
+              </button>
+              <button class="btn full" onclick="quickTask('Generate unit tests for the following function')">
+                ✅ Write Tests
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // ============================================
+    // NEXUS Dashboard - Main Application Logic
+    // ============================================
+    
+    const API_BASE = 'http://localhost:3000';
+    const WS_URL = 'ws://localhost:3000';
+    
+    // Agent definitions with cyberpunk colors
+    const AGENTS = [
+      { id: 'NEXUS-1', name: 'NEXUS', icon: '🔮', color: '#9333EA', role: 'Platform Core', xpMax: 1000 },
+      { id: 'CODEX', name: 'CODEX', icon: '💻', color: '#10B981', role: 'Code Architect', xpMax: 1000 },
+      { id: 'AURORA', name: 'AURORA', icon: '🌟', color: '#F59E0B', role: 'Research Lead', xpMax: 1000 },
+      { id: 'GHOST', name: 'GHOST', icon: '👻', color: '#06B6D4', role: 'System Ops', xpMax: 1000 },
+      { id: 'ORACLE', name: 'ORACLE', icon: '🎯', color: '#EC4899', role: 'Analysis', xpMax: 1000 },
+      { id: 'WRAITH', name: 'WRAITH', icon: '⚡', color: '#EF4444', role: 'Speed Runner', xpMax: 1000 }
+    ];
+    
+    // Application state
+    let ws = null;
+    let feedPaused = false;
+    let taskCounter = 1000;
+    let startTime = Date.now();
+    
+    let state = {
+      agents: {},
+      providers: [],
+      metrics: {
+        tasksCompleted: 0,
+        tasksFailed: 0,
+        totalTokens: 0,
+        totalResponseTime: 0,
+        recentTasks: [],
+        tasksPerMinute: 0,
+        avgResponseTime: 0
+      }
+    };
+    
+    // ============================================
+    // WebSocket Connection
+    // ============================================
+    
+    function connectWebSocket() {
+      updateConnectionStatus('connecting');
+      
+      try {
+        ws = new WebSocket(WS_URL);
+        
+        ws.onopen = () => {
+          log('Connected to NEXUS Platform', 'SUCCESS');
+          updateConnectionStatus('connected');
+          checkProviders();
+          requestInitialState();
+        };
+        
+        ws.onmessage = (event) => {
+          try {
+            const msg = JSON.parse(event.data);
+            handleMessage(msg);
+          } catch (e) {
+            console.error('Failed to parse message:', e);
+          }
+        };
+        
+        ws.onclose = () => {
+          log('Connection lost. Reconnecting...', 'WARNING');
+          updateConnectionStatus('disconnected');
+          setTimeout(connectWebSocket, 3000);
+        };
+        
+        ws.onerror = (error) => {
+          log('WebSocket error occurred', 'ERROR');
+          console.error('WebSocket error:', error);
+        };
+      } catch (e) {
+        log('Failed to create WebSocket connection', 'ERROR');
+        setTimeout(connectWebSocket, 5000);
+      }
+    }
+    
+    function send(message) {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify(message));
+        return true;
+      }
+      log('Cannot send message: not connected', 'ERROR');
+      return false;
+    }
+    
+    function updateConnectionStatus(status) {
+      const dot = document.getElementById('connection-dot');
+      const text = document.getElementById('connection-text');
+      
+      dot.className = 'connection-dot';
+      
+      switch (status) {
+        case 'connected':
+          dot.classList.add('connected');
+          text.textContent = 'Connected';
+          break;
+        case 'connecting':
+          text.textContent = 'Connecting...';
+          break;
+        case 'disconnected':
+          text.textContent = 'Disconnected';
+          break;
+        default:
+          text.textContent = 'Unknown';
+      }
+    }
+    
+    function requestInitialState() {
+      send({ type: 'GET_STATE' });
+      send({ type: 'GET_PROVIDERS' });
+    }
+    
+    // ============================================
+    // Message Handlers
+    // ============================================
+    
+    function handleMessage(msg) {
+      switch (msg.type) {
+        case 'INIT':
+        case 'STATE':
+          state = { ...state, ...msg.state };
+          render();
+          break;
+          
+        case 'AGENT_UPDATE':
+          updateAgentState(msg.agent);
+          renderAgents();
+          break;
+          
+        case 'TASK_SUBMITTED':
+          addTaskToFeed({
+            id: msg.taskId || `TASK-${++taskCounter}`,
+            agent: msg.agent,
+            description: msg.description || msg.task,
+            status: 'pending',
+            timestamp: new Date()
+          });
+          break;
+          
+        case 'TASK_PROCESSING':
+          updateTaskInFeed(msg.taskId, { status: 'processing' });
+          break;
+          
+        case 'RESULT':
+        case 'TASK_COMPLETE':
+          handleTaskComplete(msg);
+          break;
+          
+        case 'TASK_FAILED':
+          handleTaskFailed(msg);
+          break;
+          
+        case 'STREAM_CHUNK':
+          appendStreamChunk(msg.content);
+          break;
+          
+        case 'STREAM_END':
+          finalizeStream();
+          break;
+          
+        case 'PROVIDERS':
+          state.providers = msg.providers;
+          renderProviders();
+          break;
+          
+        case 'LOG':
+          log(msg.entry?.msg || msg.message, msg.entry?.type || msg.level || 'INFO');
+          break;
+          
+        case 'STATS':
+          updateStats(msg);
+          break;
+          
+        case 'ERROR':
+          log(`Error: ${msg.error || msg.message}`, 'ERROR');
+          break;
+          
+        default:
+          console.log('Unhandled message type:', msg.type);
+      }
+    }
+    
+    function updateAgentState(agentData) {
+      if (!state.agents) state.agents = {};
+      state.agents[agentData.id] = {
+        ...state.agents[agentData.id],
+        ...agentData
+      };
+    }
+    
+    function handleTaskComplete(msg) {
+      const result = msg.result || msg;
+      const taskId = msg.taskId || result.taskId;
+      
+      updateTaskInFeed(taskId, { 
+        status: 'completed',
+        duration: result.duration,
+        tokens: result.tokens 
+      });
+      
+      showResult(result);
+      updateMetrics('success', result.duration || 0, result.tokens || 0);
+      log(`Task completed in ${result.duration || '?'}s`, 'SUCCESS');
+    }
+    
+    function handleTaskFailed(msg) {
+      updateTaskInFeed(msg.taskId, { status: 'failed' });
+      updateMetrics('failure', 0, 0);
+      log(`Task failed: ${msg.error || 'Unknown error'}`, 'ERROR');
+    }
+    
+    // ============================================
+    // Task Execution Functions
+    // ============================================
+    
+    function executeTask() {
+      const agentSelect = document.getElementById('agent-select');
+      const providerSelect = document.getElementById('provider-select');
+      const taskInput = document.getElementById('task-input');
+      
+      const agent = agentSelect.value;
+      const provider = providerSelect.value;
+      const task = taskInput.value.trim();
+      
+      if (!task) {
+        log('Please enter a task', 'WARNING');
+        taskInput.focus();
+        return;
+      }
+      
+      if (agent === 'ALL') {
+        executeAll();
+        return;
+      }
+      
+      const taskId = `TASK-${++taskCounter}`;
+      
+      addTaskToFeed({
+        id: taskId,
+        agent: agent,
+        description: task.substring(0, 50) + (task.length > 50 ? '...' : ''),
+        status: 'pending',
+        timestamp: new Date()
+      });
+      
+      send({
+        type: 'EXECUTE',
+        taskId: taskId,
+        agent: agent,
+        task: task,
+        provider: provider
+      });
+      
+      log(`Executing task on ${agent} via ${provider}`, 'AGENT');
+    }
+    
+    function executeAll() {
+      const providerSelect = document.getElementById('provider-select');
+      const taskInput = document.getElementById('task-input');
+      
+      const provider = providerSelect.value;
+      const task = taskInput.value.trim();
+      
+      if (!task) {
+        log('Please enter a task', 'WARNING');
+        taskInput.focus();
+        return;
+      }
+      
+      AGENTS.forEach(agent => {
+        const taskId = `TASK-${++taskCounter}`;
+        addTaskToFeed({
+          id: taskId,
+          agent: agent.id,
+          description: task.substring(0, 50) + (task.length > 50 ? '...' : ''),
+          status: 'pending',
+          timestamp: new Date()
+        });
+      });
+      
+      send({
+        type: 'EXECUTE_ALL',
+        task: task,
+        provider: provider
+      });
+      
+      log(`Executing task on ALL agents via ${provider}`, 'AGENT');
+    }
+    
+    function streamTask() {
+      const providerSelect = document.getElementById('provider-select');
+      const taskInput = document.getElementById('task-input');
+      
+      const provider = providerSelect.value;
+      const task = taskInput.value.trim();
+      
+      if (!task) {
+        log('Please enter a task', 'WARNING');
+        taskInput.focus();
+        return;
+      }
+      
+      const container = document.getElementById('result-container');
+      const content = document.getElementById('result-content');
+      const agent = document.getElementById('result-agent');
+      const meta = document.getElementById('result-meta');
+      
+      container.classList.add('show');
+      agent.textContent = '◉ STREAMING';
+      meta.textContent = provider;
+      content.textContent = '';
+      
+      send({
+        type: 'STREAM',
+        task: task,
+        provider: provider
+      });
+      
+      log(`Streaming response via ${provider}`, 'AGENT');
+    }
+    
+    function quickTask(task) {
+      document.getElementById('task-input').value = task;
+      log(`Quick task loaded: ${task.substring(0, 30)}...`, 'INFO');
+    }
+    
+    // ============================================
+    // Results Display
+    // ============================================
+    
+    function showResult(result) {
+      const container = document.getElementById('result-container');
+      const content = document.getElementById('result-content');
+      const agent = document.getElementById('result-agent');
+      const meta = document.getElementById('result-meta');
+      
+      container.classList.add('show');
+      agent.textContent = result.provider || result.agent || 'Result';
+      meta.textContent = result.duration 
+        ? `${result.duration}s | ${result.tokens || 0} tokens`
+        : '';
+      
+      // Apply basic syntax highlighting
+      content.innerHTML = highlightSyntax(result.content || result.response || '');
+    }
+    
+    function appendStreamChunk(content) {
+      const container = document.getElementById('result-container');
+      const contentEl = document.getElementById('result-content');
+      
+      container.classList.add('show');
+      contentEl.innerHTML += escapeHtml(content);
+      contentEl.scrollTop = contentEl.scrollHeight;
+    }
+    
+    function finalizeStream() {
+      const agent = document.getElementById('result-agent');
+      agent.textContent = '✓ COMPLETE';
+      log('Stream completed', 'SUCCESS');
+    }
+    
+    function highlightSyntax(text) {
+      // Basic syntax highlighting for code blocks
+      let html = escapeHtml(text);
+      
+      // Keywords
+      const keywords = ['function', 'const', 'let', 'var', 'return', 'if', 'else', 'for', 'while', 'class', 'import', 'export', 'from', 'async', 'await', 'try', 'catch', 'throw', 'new', 'this', 'true', 'false', 'null', 'undefined'];
+      keywords.forEach(kw => {
+        const regex = new RegExp(`\\b(${kw})\\b`, 'g');
+        html = html.replace(regex, '<span class="keyword">$1</span>');
+      });
+      
+      // Strings
+      html = html.replace(/(["'`])(?:(?=(\\?))\2.)*?\1/g, '<span class="string">$&</span>');
+      
+      // Comments
+      html = html.replace(/(\/\/.*$)/gm, '<span class="comment">$1</span>');
+      html = html.replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="comment">$1</span>');
+      
+      // Numbers
+      html = html.replace(/\b(\d+\.?\d*)\b/g, '<span class="number">$1</span>');
+      
+      // Functions
+      html = html.replace(/\b([a-zA-Z_]\w*)\s*\(/g, '<span class="function">$1</span>(');
+      
+      return html;
+    }
+    
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+    
+    // ============================================
+    // Task Feed
+    // ============================================
+    
+    function addTaskToFeed(task) {
+      if (feedPaused) return;
+      
+      const feed = document.getElementById('task-feed');
+      const agentData = AGENTS.find(a => a.id === task.agent) || { name: task.agent, color: '#00f5ff' };
+      
+      const item = document.createElement('div');
+      item.className = `feed-item ${task.status}`;
+      item.id = `feed-${task.id}`;
+      item.style.setProperty('--agent-color', agentData.color);
+      
+      const timeStr = task.timestamp.toLocaleTimeString();
+      
+      item.innerHTML = `
+        <div class="feed-header">
+          <span class="feed-task-id">#${task.id}</span>
+          <span class="feed-time">${timeStr}</span>
+        </div>
+        <div class="feed-agent" style="--agent-color: ${agentData.color}">${agentData.icon} ${agentData.name}</div>
+        <div class="feed-description">${escapeHtml(task.description)}</div>
+        <span class="feed-status ${task.status}">${task.status}</span>
+      `;
+      
+      feed.insertBefore(item, feed.firstChild);
+      
+      // Limit feed items
+      while (feed.children.length > 50) {
+        feed.removeChild(feed.lastChild);
+      }
+    }
+    
+    function updateTaskInFeed(taskId, updates) {
+      const item = document.getElementById(`feed-${taskId}`);
+      if (!item) return;
+      
+      // Update status
+      if (updates.status) {
+        const statusEl = item.querySelector('.feed-status');
+        item.className = `feed-item ${updates.status}`;
+        statusEl.className = `feed-status ${updates.status}`;
+        statusEl.textContent = updates.status;
+      }
+      
+      // Update time if duration available
+      if (updates.duration) {
+        const timeEl = item.querySelector('.feed-time');
+        timeEl.textContent = `${updates.duration}s`;
+      }
+    }
+    
+    function clearFeed() {
+      const feed = document.getElementById('task-feed');
+      feed.innerHTML = `
+        <div class="feed-item completed">
+          <div class="feed-header">
+            <span class="feed-task-id">#SYSTEM</span>
+            <span class="feed-time">${new Date().toLocaleTimeString()}</span>
+          </div>
+          <div class="feed-agent" style="--agent-color: var(--cyan)">SYSTEM</div>
+          <div class="feed-description">Task feed cleared</div>
+          <span class="feed-status completed">ready</span>
+        </div>
+      `;
+      log('Task feed cleared', 'INFO');
+    }
+    
+    function toggleFeedPause() {
+      feedPaused = !feedPaused;
+      const btn = document.querySelector('[onclick="toggleFeedPause()"]');
+      btn.textContent = feedPaused ? '▶ RESUME' : '⏸ PAUSE';
+      log(feedPaused ? 'Task feed paused' : 'Task feed resumed', 'INFO');
+    }
+    
+    // ============================================
+    // Metrics Tracking
+    // ============================================
+    
+    function updateMetrics(type, duration, tokens) {
+      const now = Date.now();
+      
+      state.metrics.recentTasks.push({
+        time: now,
+        type: type,
+        duration: duration,
+        tokens: tokens
+      });
+      
+      // Keep only last 60 seconds of tasks
+      state.metrics.recentTasks = state.metrics.recentTasks.filter(
+        t => now - t.time < 60000
+      );
+      
+      if (type === 'success') {
+        state.metrics.tasksCompleted++;
+        state.metrics.totalResponseTime += duration;
+        state.metrics.totalTokens += tokens;
+      } else {
+        state.metrics.tasksFailed++;
+      }
+      
+      renderMetrics();
+    }
+    
+    function renderMetrics() {
+      const recentTasks = state.metrics.recentTasks;
+      const tasksPerMinute = recentTasks.length;
+      
+      const successfulTasks = recentTasks.filter(t => t.type === 'success');
+      const avgResponseTime = successfulTasks.length > 0
+        ? Math.round(successfulTasks.reduce((sum, t) => sum + t.duration, 0) / successfulTasks.length)
+        : 0;
+      
+      const totalTasks = state.metrics.tasksCompleted + state.metrics.tasksFailed;
+      const successRate = totalTasks > 0
+        ? Math.round((state.metrics.tasksCompleted / totalTasks) * 100)
+        : 100;
+      
+      document.getElementById('metric-tasks-min').textContent = tasksPerMinute.toFixed(1);
+      document.getElementById('metric-avg-response').textContent = `${avgResponseTime}ms`;
+      document.getElementById('metric-success-rate').textContent = `${successRate}%`;
+      document.getElementById('metric-total-tokens').textContent = formatNumber(state.metrics.totalTokens);
+      
+      // Update trends
+      updateTrend('metric-tasks-trend', tasksPerMinute, 5);
+      updateTrend('metric-response-trend', avgResponseTime, 1000, true);
+      updateTrend('metric-success-trend', successRate, 95);
+      updateTrend('metric-tokens-trend', state.metrics.totalTokens, 1000);
+    }
+    
+    function updateTrend(elementId, value, threshold, inverse = false) {
+      const el = document.getElementById(elementId);
+      const good = inverse ? value < threshold : value >= threshold;
+      
+      el.className = `metric-trend ${good ? 'up' : 'down'}`;
+      el.textContent = good ? '↑ Good' : '↓ Low';
+    }
+    
+    function resetMetrics() {
+      state.metrics = {
+        tasksCompleted: 0,
+        tasksFailed: 0,
+        totalTokens: 0,
+        totalResponseTime: 0,
+        recentTasks: [],
+        tasksPerMinute: 0,
+        avgResponseTime: 0
+      };
+      renderMetrics();
+      log('Metrics reset', 'INFO');
+    }
+    
+    function formatNumber(num) {
+      if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+      if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+      return num.toString();
+    }
+    
+    // ============================================
+    // Rendering Functions
+    // ============================================
+    
+    function render() {
+      renderAgents();
+      renderProviders();
+      renderMetrics();
+      updateStats();
+    }
+    
+    function renderAgents() {
+      const grid = document.getElementById('agents-grid');
+      
+      grid.innerHTML = AGENTS.map(agent => {
+        const data = state.agents?.[agent.id] || {
+          status: 'STANDBY',
+          tasksCompleted: 0,
+          level: 1,
+          xp: 0
+        };
+        
+        const xpPercent = Math.min(((data.xp || 0) / agent.xpMax) * 100, 100);
+        const statusClass = (data.status || 'STANDBY').toLowerCase();
+        
+        return `
+          <div class="agent-card ${statusClass}" 
+               style="--agent-color: ${agent.color}; --agent-color-dim: ${agent.color}40"
+               onclick="selectAgent('${agent.id}')">
+            <div class="level-badge">LV${data.level || 1}</div>
+            <span class="agent-icon">${agent.icon}</span>
+            <div class="agent-name">${agent.name}</div>
+            <div class="agent-role">${agent.role}</div>
+            <div class="agent-stats">
+              <div class="agent-stat">
+                <div class="agent-stat-label">Tasks</div>
+                <div class="agent-stat-value">${data.tasksCompleted || 0}</div>
+              </div>
+              <div class="agent-stat">
+                <div class="agent-stat-label">XP</div>
+                <div class="agent-stat-value">${data.xp || 0}</div>
+              </div>
+            </div>
+            <div class="xp-bar-container">
+              <div class="xp-bar-header">
+                <span>Level Progress</span>
+                <span>${xpPercent.toFixed(0)}%</span>
+              </div>
+              <div class="xp-bar">
+                <div class="xp-bar-fill" style="width: ${xpPercent}%"></div>
+              </div>
+            </div>
+            <div class="status-badge ${statusClass}">${data.status || 'STANDBY'}</div>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    function renderProviders() {
+      const grid = document.getElementById('providers-grid');
+      const providers = state.providers?.length ? state.providers : [
+        { name: 'OpenCode', type: 'CLI', online: true },
+        { name: 'Claude', type: 'CLI', online: true },
+        { name: 'Ollama', type: 'Local', online: false },
+        { name: 'OpenAI', type: 'API', online: false },
+        { name: 'Anthropic', type: 'API', online: false },
+        { name: 'DeepSeek', type: 'API', online: false }
+      ];
+      
+      grid.innerHTML = providers.map(p => `
+        <div class="provider-card">
+          <div class="provider-info">
+            <div class="provider-name">${p.name}</div>
+            <div class="provider-type">${p.type}</div>
+          </div>
+          <div class="provider-status ${p.online ? 'online' : 'offline'}" 
+               title="${p.online ? 'Online' : 'Offline'}"></div>
+        </div>
+      `).join('');
+      
+      const onlineCount = providers.filter(p => p.online).length;
+      document.getElementById('stat-providers').textContent = onlineCount;
+    }
+    
+    function updateStats(msg) {
+      const agents = state.agents || {};
+      const agentList = Object.values(agents);
+      const activeCount = agentList.filter(a => a.status === 'WORKING').length;
+      const totalTasks = agentList.reduce((sum, a) => sum + (a.tasksCompleted || 0), 0);
+      
+      document.getElementById('stat-agents').textContent = `${activeCount}/6`;
+      document.getElementById('stat-tasks').textContent = totalTasks;
+      
+      // Update uptime
+      const elapsed = Date.now() - startTime;
+      const hours = Math.floor(elapsed / 3600000);
+      const minutes = Math.floor((elapsed % 3600000) / 60000);
+      const seconds = Math.floor((elapsed % 60000) / 1000);
+      document.getElementById('stat-uptime').textContent = 
+        `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+    
+    function selectAgent(agentId) {
+      document.getElementById('agent-select').value = agentId;
+      const agent = AGENTS.find(a => a.id === agentId);
+      if (agent) {
+        log(`Selected agent: ${agent.name}`, 'INFO');
+      }
+    }
+    
+    // ============================================
+    // Provider Management
+    // ============================================
+    
+    function checkProviders() {
+      send({ type: 'GET_PROVIDERS' });
+      log('Checking providers...', 'INFO');
+      
+      // Also try REST API
+      fetch(`${API_BASE}/api/providers`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.providers) {
+            state.providers = data.providers;
+            renderProviders();
+          }
+        })
+        .catch(err => {
+          console.log('REST API not available:', err.message);
+        });
+    }
+    
+    // ============================================
+    // Logging
+    // ============================================
+    
+    function log(message, type = 'INFO') {
+      const container = document.getElementById('log-container');
+      const time = new Date().toLocaleTimeString();
+      
+      const entry = document.createElement('div');
+      entry.className = 'log-entry';
+      entry.innerHTML = `
+        <span class="log-time">${time}</span>
+        <span class="log-type ${type}">[${type}]</span>
+        <span class="log-message">${escapeHtml(message)}</span>
+      `;
+      
+      container.insertBefore(entry, container.firstChild);
+      
+      // Limit log entries
+      while (container.children.length > 100) {
+        container.removeChild(container.lastChild);
+      }
+    }
+    
+    function clearLog() {
+      document.getElementById('log-container').innerHTML = '';
+      log('Log cleared', 'INFO');
+    }
+    
+    // ============================================
+    // Uptime Timer
+    // ============================================
+    
+    setInterval(updateStats, 1000);
+    
+    // ============================================
+    // Initialize
+    // ============================================
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      log('NEXUS Dashboard initializing...', 'SYSTEM');
+      connectWebSocket();
+      
+      // Handle form submission
+      document.getElementById('task-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        executeTask();
+      });
+      
+      // Initialize mock agents for demo
+      AGENTS.forEach(agent => {
+        state.agents[agent.id] = {
+          id: agent.id,
+          status: 'STANDBY',
+          tasksCompleted: Math.floor(Math.random() * 50),
+          level: Math.floor(Math.random() * 10) + 1,
+          xp: Math.floor(Math.random() * 800)
+        };
+      });
+      
+      render();
+    });
+  </script>
+</body>
+</html>

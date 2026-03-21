@@ -1,0 +1,451 @@
+
+
+╔═══════════════════════════════════════════════════════════════╗
+║           NEXUS PLATFORM v2.0 - MODULE TEST SUITE            ║
+╚═══════════════════════════════════════════════════════════════╝
+
+
+
+📦 Testing: Agent System
+     - Created agent: Test Agent
+     - Agent state: IDLE
+   ✅ PASSED (4.28ms)
+
+📦 Testing: Provider System
+     - Created provider: Test Ollama
+     - Provider type: local
+   ✅ PASSED (29.79ms)
+
+📦 Testing: Channel System
+   ❌ FAILED: Cannot find package 'ws' imported from /home/runner/workspace/src/channels/channel-system.js
+
+📦 Testing: Memory System
+   ❌ FAILED: Cannot find package 'better-sqlite3' imported from /home/runner/workspace/src/memory/memory-system.js
+
+📦 Testing: Plugin System
+     - Plugin manager created
+     - Status: 0 plugins
+   ✅ PASSED (2.02ms)
+
+📦 Testing: Event Bus
+   ❌ FAILED: Cannot find package 'ws' imported from /home/runner/workspace/src/events/event-bus.js
+
+📦 Testing: Task Queue
+     - Queue created: test-queue
+     - Concurrency: 5
+   ✅ PASSED (1.54ms)
+
+📦 Testing: Security System
+     - User created: testuser
+     - API key created: nxk_238327393a9...
+   ✅ PASSED (2.29ms)
+
+📦 Testing: Code Sandbox
+     - Sandbox created
+     - Execution ID: exec_1774052823185_d...
+   ✅ PASSED (3.08ms)
+
+📦 Testing: Knowledge Graph
+     - Graph created
+     - Nodes: 2
+     - Relationships: 1
+   ✅ PASSED (2.23ms)
+
+📦 Testing: Workflow Engine
+     - Workflow created: Test Workflow
+     - Steps: 2
+     - Validation: PASS
+   ✅ PASSED (2.01ms)
+
+📦 Testing: LLM Orchestrator
+     - Orchestrator created
+     - Models: 1
+     - Templates: 1
+     - Task category: code_generation
+   ✅ PASSED (2.04ms)
+
+📦 Testing: Collaboration System
+   ❌ FAILED: Cannot find package 'ws' imported from /home/runner/workspace/src/collab/realtime-collab.js
+
+📦 Testing: Monitoring System
+     - Monitoring system created
+     - Metrics registered: 8
+     - Alert created: Test Alert
+   ✅ PASSED (16.12ms)
+
+📦 Testing: Multi-Modal System
+     - Multi-modal processor created
+     - Asset: test.png
+     - Asset type: image
+   ✅ PASSED (2.02ms)
+
+📦 Testing: Cache System
+     - Cache manager created
+     - Cache stats: 1 items
+     - Hit rate: 100.00%
+   ✅ PASSED (1.93ms)
+
+📦 Testing: Memory Persistence
+   ❌ FAILED: Cannot find package 'better-sqlite3' imported from /home/runner/workspace/src/persistence.js
+
+📦 Testing: Git Tool
+fatal: not a git repository (or any parent up to mount point /home/runner)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+     - Git tool loaded
+     - Has status: yes
+   ✅ PASSED (29.80ms)
+
+📦 Testing: Docker Tool
+/bin/sh: 1: docker: not found
+     - Docker tool loaded
+     - Docker available: false
+   ✅ PASSED (9.22ms)
+
+📦 Testing: Database Tool
+   ❌ FAILED: Cannot find package 'better-sqlite3' imported from /home/runner/workspace/src/tools/database.js
+
+📦 Testing: Integrations
+     - GitHub integration loaded: not configured
+     - Slack integration loaded: not configured
+     - Webhook manager loaded
+   ✅ PASSED (1.83ms)
+
+📦 Testing: Original Collaboration
+     - Collaboration module loaded
+     - Agents created: 2
+     - Parallel execution: 2 results
+   ✅ PASSED (1.64ms)
+
+📦 Testing: Discord Channel
+   ❌ FAILED: Cannot find package 'ws' imported from /home/runner/workspace/src/channels/channel-system.js
+
+📦 Testing: Telegram Channel
+   ❌ FAILED: Cannot find package 'ws' imported from /home/runner/workspace/src/channels/channel-system.js
+
+📦 Testing: Advanced Integrations
+     - Rate Limiter: 5 req/min
+     - Webhook Verifier: Signature generated
+     - Agent Communicator: 1 agents, 5 protocols
+     - Redis Cache: Using in-memory fallback
+   ✅ PASSED (2.91ms)
+
+📦 Testing: Middleware Systems
+   ❌ FAILED: Cannot find package 'ws' imported from /home/runner/workspace/src/integrations/middleware.js
+
+📦 Testing: Webhook Providers
+     - Webhook Provider Manager: 4 providers
+     - GitLab: Event parsing works
+     - Bitbucket: Event parsing works
+     - N8N: Ready
+     - Zapier: Ready
+   ✅ PASSED (1.82ms)
+
+📦 Testing: File Upload Handler
+     - File Upload Handler: Validation works
+     - File Analyzer: Text analysis works
+     - Size formatter: 1.00 MB
+   ✅ PASSED (2.34ms)
+
+📦 Testing: App Integrations
+     - Notion: notion integration ready
+     - Canva: canva integration ready
+     - Figma: figma integration ready
+     - Linear: linear integration ready
+     - Jira: jira integration ready
+     - Trello: trello integration ready
+     - Airtable: airtable integration ready
+     - Google Workspace: google integration ready
+     - Salesforce: salesforce integration ready
+     - HubSpot: hubspot integration ready
+     - Integration Manager: 10 integrations registered
+   ✅ PASSED (3.51ms)
+
+📦 Testing: More App Integrations
+     - Adobe Creative Cloud: adobe ready
+     - AllTrails: alltrails ready
+     - Apple Music: apple_music ready
+     - Booking.com: booking ready
+     - Expedia: expedia ready
+     - Instacart: instacart ready
+     - Lovable: lovable ready
+     - OpenTable: opentable ready
+     - Replit: replit ready
+     - Integration Manager: 9 integrations registered
+   ✅ PASSED (1.96ms)
+
+📦 Testing: Enterprise App Integrations
+     - Spotify: spotify ready
+     - Target: target ready
+     - TripAdvisor: tripadvisor ready
+     - Zillow: zillow ready
+     - Base44: base44 ready
+     - Botpress: botpress ready
+     - Box: box ready
+     - Brand24: brand24 ready
+     - Brex: brex ready
+     - Cloudflare: cloudflare ready
+     - Cloudinary: cloudinary ready
+     - Coursera: coursera ready
+     - Dropbox: dropbox ready
+     - Integration Manager: 13 integrations registered
+   ✅ PASSED (2.83ms)
+
+📦 Testing: Social & Communication Integrations
+     - Twitter: twitter ready
+     - Instagram: instagram ready
+     - WhatsApp: whatsapp ready
+     - LinkedIn: linkedin ready
+     - Telegram Bot: telegram-bot ready
+     - Slack Bot: slack-bot ready
+     - Discord Bot: discord-bot ready
+     - Teams Bot: teams-bot ready
+     - Zoom Bot: zoom-bot ready
+     - Integration Manager: 9 integrations registered
+   ✅ PASSED (1.49ms)
+
+📦 Testing: DevOps & Infrastructure Integrations
+     - IONOS: ionos ready
+     - Doppler: doppler ready
+     - Datadog: datadog ready
+     - DigitalOcean: digitalocean ready
+     - Vercel: vercel ready
+     - HuggingFace: huggingface ready
+     - Docker: docker ready
+     - Prisma: prisma ready
+     - Obsidian: obsidian ready
+     - Zube: zube ready
+     - BuildJet: buildjet ready
+     - Integration Manager: 11 integrations registered
+   ✅ PASSED (2.06ms)
+
+📦 Testing: Business & Productivity Integrations
+     - GoDaddy: godaddy ready
+     - Granola: granola ready
+     - Gusto: gusto ready
+     - Hex: hex ready
+     - HeyGen: heygen ready
+     - HighLevel: highlevel ready
+     - Indeed: indeed ready
+     - Credit Karma: creditkarma ready
+     - InVideo: invideo ready
+     - JotForm: jotform ready
+     - Khan Academy: khanacademy ready
+     - Kraken: kraken ready
+     - Legal Zoom: legalzoom ready
+     - Lona: lona ready
+     - Netlify: netlify ready
+     - Norton: norton ready
+     - PayPal: paypal ready
+     - Chime: chime ready
+     - Integration Manager: 18 integrations registered
+   ✅ PASSED (2.07ms)
+
+📦 Testing: Marketing & Analytics Integrations
+     - Mailchimp: mailchimp ready
+     - SendGrid: sendgrid ready
+     - Twilio: twilio ready
+     - Stripe: stripe ready
+     - Intercom: intercom ready
+     - Freshdesk: freshdesk ready
+     - Zendesk: zendesk ready
+     - ActiveCampaign: activecampaign ready
+     - ConvertKit: convertkit ready
+     - Klaviyo: klaviyo ready
+     - Mixpanel: mixpanel ready
+     - Amplitude: amplitude ready
+     - Segment: segment ready
+     - Braze: braze ready
+     - Clearbit: clearbit ready
+     - FullContact: fullcontact ready
+     - Hunter: hunter ready
+     - Snov.io: snovio ready
+     - ZeroBounce: zerobounce ready
+     - NeverBounce: neverbounce ready
+     - Integration Manager: 20 integrations registered
+   ✅ PASSED (2.18ms)
+
+📦 Testing: IoT, Hardware & Utility Integrations
+     - PhilipsHue: philipshue ready
+     - Wemo: wemo ready
+     - SmartThings: smartthings ready
+     - Ring: ring ready
+     - Nest: nest ready
+     - Ecobee: ecobee ready
+     - Tesla: tesla ready
+     - Control4: control4 ready
+     - Crestron: crestron ready
+     - Lutron: lutron ready
+     - Integration Manager: 10 integrations registered
+   ✅ PASSED (1.69ms)
+
+📦 Testing: Data, Scientific & Research Integrations
+     - WolframAlpha: wolframalpha ready
+     - IBMWatson: ibmwatson ready
+     - Clarifai: clarifai ready
+     - Mapbox: mapbox ready
+     - OpenWeatherMap: openweathermap ready
+     - Algolia: algolia ready
+     - Elasticsearch: elasticsearch ready
+     - Pinecone: pinecone ready
+     - Weaviate: weaviate ready
+     - Qdrant: qdrant ready
+     - Meilisearch: meilisearch ready
+     - Typesense: typesense ready
+     - DataRobot: datarobot ready
+     - KNIME: knime ready
+     - RapidMiner: rapidminer ready
+     - Alteryx: alteryx ready
+     - Trifacta: trifacta ready
+     - Integration Manager: 17 integrations registered
+   ✅ PASSED (3.00ms)
+
+📦 Testing: Education, Media & Communication Integrations
+     - Coursera: coursera ready
+     - Udemy: udemy ready
+     - Skillshare: skillshare ready
+     - Duolingo: duolingo ready
+     - Quizlet: quizlet ready
+     - Codecademy: codecademy ready
+     - Datacamp: datacamp ready
+     - Pluralsight: pluralsight ready
+     - Medium: medium ready
+     - Substack: substack ready
+     - Ghost: ghost ready
+     - YouTube: youtube ready
+     - Vimeo: vimeo ready
+     - Twitch: twitch ready
+     - Spotify: spotify ready
+     - SoundCloud: soundcloud ready
+     - Pandora: pandora ready
+     - Bandcamp: bandcamp ready
+     - Discord: discord ready
+     - Slack: slack ready
+     - Zoom: zoom ready
+     - MS Teams: msteams ready
+     - Line: line ready
+     - WeChat: wechat ready
+     - Integration Manager: 24 integrations registered
+   ✅ PASSED (3.33ms)
+
+📦 Testing: Fintech, Healthcare & Lifestyle Integrations
+
+📦 Testing: Additional LLM Providers (15)
+     - Google AI: Google AI (4 models)
+     - Mistral: Mistral AI (4 models)
+     - Cohere: Cohere (3 models)
+     - AI21: AI21 Jamba (2 models)
+     - Meta: Meta AI (3 models)
+     - HuggingFace: Hugging Face (3 models)
+     - Replicate: Replicate (2 models)
+     - Perplexity: Perplexity (3 models)
+     - Groq: Groq (3 models)
+     - DeepSeek: DeepSeek (2 models)
+     - Fireworks: Fireworks AI (2 models)
+     - Together: Together AI (2 models)
+     - Anyscale: Anyscale (2 models)
+     - Cloudflare: Cloudflare Workers AI (2 models)
+     - Stability AI: Stability AI (2 models)
+   ✅ PASSED (5.54ms)
+
+📦 Testing: Additional Agents (20)
+     - Total agents: 20
+     - Agent IDs: ORACLE, SCULPTOR, GUARDIAN, MATHEMATICIAN, LINGUIST, ...
+   ✅ PASSED (1.44ms)
+
+📦 Testing: Additional Channels (10)
+   ❌ FAILED: Cannot find package 'ws' imported from /home/runner/workspace/src/channels/channel-system.js
+
+📦 Testing: Community Plugins (59)
+     - Total plugins: 59
+     - Plugin count matches: true
+     - All descriptions present: true
+     - Sample plugins: math-plugin, translator-plugin, image-plugin, calendar-plugin, weather-plugin, markdown-plugin, calculator-plugin, qrcode-plugin, emoji-plugin, color-plugin
+   ✅ PASSED (0.67ms)
+
+📦 Testing: Features Module (21 Features)
+     - Features loaded: 59
+     - Feature names: ABTestManager, APIVersioning, AnalyticsTracker, AuditLogger, BackupManager
+   ✅ PASSED (9.81ms)
+
+📦 Testing: Provider Manager Integration
+     - Total providers: 5
+     - Healthy providers: 0
+     - Manager status: {"total":5,"healthy":0}
+   ✅ PASSED (0.59ms)
+
+📦 Testing: Agent Registry Integration
+     - Registered agents: 20
+     - Sample agent roles: ORACLE [Data Analyst], SCULPTOR [UI Designer], GUARDIAN [Security Auditor]
+   ✅ PASSED (0.36ms)
+
+📦 Testing: Event Bus Stress Test
+   ❌ FAILED: Cannot find package 'ws' imported from /home/runner/workspace/src/events/event-bus.js
+
+📦 Testing: Cache System Stress Test
+     - Items written: 1000 in 20ms
+     - Items read: 1000 in 1ms
+     - Cache hit rate: 100.00%
+   ✅ PASSED (20.83ms)
+
+📦 Testing: Memory System Vector Store
+   ❌ FAILED: Cannot find package 'better-sqlite3' imported from /home/runner/workspace/src/memory/memory-system.js
+
+📦 Testing: Task Queue Processing
+     - Jobs added: 10
+     - Waiting jobs: 10
+     - Queue name: test-processing
+   ✅ PASSED (1.31ms)
+     - Robinhood: robinhood ready
+     - Coinbase: coinbase ready
+     - Revolut: revolut ready
+     - Wise: wise ready
+     - Plaid: plaid ready
+     - Fitbit: fitbit ready
+     - Garmin: garmin ready
+     - Oura: oura ready
+     - Whoop: whoop ready
+     - Peloton: peloton ready
+     - Calm: calm ready
+     - Headspace: headspace ready
+     - MyFitnessPal: myfitnesspal ready
+     - Strava: strava ready
+     - Square: square ready
+     - Mindbody: mindbody ready
+     - DoorDash: doordash ready
+     - UberEats: ubereats ready
+     - Instacart: instacart ready
+     - TaskRabbit: taskrabbit ready
+     - Integration Manager: 20 integrations registered
+   ✅ PASSED (45.95ms)
+
+
+╔═══════════════════════════════════════════════════════════════╗
+║                     TEST SUMMARY                              ║
+╠═══════════════════════════════════════════════════════════════╣
+║  Total Tests:  50                                            ║
+║  ✅ Passed:     38                                            ║
+║  ❌ Failed:     12                                            ║
+╠═══════════════════════════════════════════════════════════════╣
+║  ERRORS:                                                      ║
+║    - Channel System: Cannot find package 'ws' imported from /home/runner/workspace/src/channels/channel-system.js║
+║    - Memory System: Cannot find package 'better-sqlite3' imported from /home/runner/workspace/src/memory/memory-system.js║
+║    - Event Bus: Cannot find package 'ws' imported from /home/runner/workspace/src/events/event-bus.js║
+║    - Collaboration System: Cannot find package 'ws' imported from /home/runner/workspace/src/collab/realtime-collab.js║
+║    - Memory Persistence: Cannot find package 'better-sqlite3' imported from /home/runner/workspace/src/persistence.js║
+║    - Database Tool: Cannot find package 'better-sqlite3' imported from /home/runner/workspace/src/tools/database.js║
+║    - Discord Channel: Cannot find package 'ws' imported from /home/runner/workspace/src/channels/channel-system.js║
+║    - Telegram Channel: Cannot find package 'ws' imported from /home/runner/workspace/src/channels/channel-system.js║
+║    - Middleware Systems: Cannot find package 'ws' imported from /home/runner/workspace/src/integrations/middleware.js║
+║    - Additional Channels (10): Cannot find package 'ws' imported from /home/runner/workspace/src/channels/channel-system.js║
+║    - Event Bus Stress Test: Cannot find package 'ws' imported from /home/runner/workspace/src/events/event-bus.js║
+║    - Memory System Vector Store: Cannot find package 'better-sqlite3' imported from /home/runner/workspace/src/memory/memory-system.js║
+╠═══════════════════════════════════════════════════════════════╣
+║  SLOWEST MODULES:                                             ║
+║    Fintech, Healthcare & Lifestyle Integrations: 45.95ms     ║
+║    Git Tool: 29.80ms                                         ║
+║    Provider System: 29.79ms                                  ║
+║    Cache System Stress Test: 20.83ms                         ║
+║    Monitoring System: 16.12ms                                ║
+╚═══════════════════════════════════════════════════════════════╝
+
+

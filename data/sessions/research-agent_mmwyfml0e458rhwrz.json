@@ -1,0 +1,716 @@
+{
+  "sessionId": "mmwyfml0e458rhwrz",
+  "agentId": "research-agent",
+  "messages": [
+    {
+      "id": "mmwyfo4q3e5s8yqqduf",
+      "role": "user",
+      "content": "Test message 101",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qiy5gpsg6q3",
+      "role": "assistant",
+      "content": "Response 101",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qm9f7nuyoffa",
+      "role": "user",
+      "content": "Test message 102",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qtk02n223pz8",
+      "role": "assistant",
+      "content": "Response 102",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4q2wb2xt82e2g",
+      "role": "user",
+      "content": "Test message 103",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4q8dkymnddm5w",
+      "role": "assistant",
+      "content": "Response 103",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4q5gpfxtlsbuj",
+      "role": "user",
+      "content": "Test message 104",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qagi3europ9",
+      "role": "assistant",
+      "content": "Response 104",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4q2si8euv2gio",
+      "role": "user",
+      "content": "Test message 105",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4q9yxq3c1rnqi",
+      "role": "assistant",
+      "content": "Response 105",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4q890o8x8aofo",
+      "role": "user",
+      "content": "Test message 106",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qxzdf5dx8ex",
+      "role": "assistant",
+      "content": "Response 106",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qvdlxliluj7b",
+      "role": "user",
+      "content": "Test message 107",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qoezmjobmnt",
+      "role": "assistant",
+      "content": "Response 107",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qy4oriajx8m",
+      "role": "user",
+      "content": "Test message 108",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4q6k83dvhmbkh",
+      "role": "assistant",
+      "content": "Response 108",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qonfuoq64o3j",
+      "role": "user",
+      "content": "Test message 109",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qrnbcxo3hfdb",
+      "role": "assistant",
+      "content": "Response 109",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qxu3ygthqd3r",
+      "role": "user",
+      "content": "Test message 110",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qr9xxq4g0yd",
+      "role": "assistant",
+      "content": "Response 110",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4q241i01cjc1",
+      "role": "user",
+      "content": "Test message 111",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qgvnhkd88i5",
+      "role": "assistant",
+      "content": "Response 111",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qhtjz6pwdcno",
+      "role": "user",
+      "content": "Test message 112",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4q1gql3ktjmlm",
+      "role": "assistant",
+      "content": "Response 112",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4q40s5poyqvxp",
+      "role": "user",
+      "content": "Test message 113",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4q7aost464lc8",
+      "role": "assistant",
+      "content": "Response 113",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qhy4z53q1uo8",
+      "role": "user",
+      "content": "Test message 114",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4q44dmyawl806",
+      "role": "assistant",
+      "content": "Response 114",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4q47ukv10hjal",
+      "role": "user",
+      "content": "Test message 115",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qrgycj9u522q",
+      "role": "assistant",
+      "content": "Response 115",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qtq0bo8tjx6b",
+      "role": "user",
+      "content": "Test message 116",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qjp8kmvly48n",
+      "role": "assistant",
+      "content": "Response 116",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qw5ncpqdp3gd",
+      "role": "user",
+      "content": "Test message 117",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qweqgretujy",
+      "role": "assistant",
+      "content": "Response 117",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qt4lf4e4xigf",
+      "role": "user",
+      "content": "Test message 118",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qrsj3ae5b5h",
+      "role": "assistant",
+      "content": "Response 118",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4q1b9xwon7gya",
+      "role": "user",
+      "content": "Test message 119",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4q51z4zia1pb3",
+      "role": "assistant",
+      "content": "Response 119",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qy3z7jewns5k",
+      "role": "user",
+      "content": "Test message 120",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4q5f1evyz5myp",
+      "role": "assistant",
+      "content": "Response 120",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qtmvqwa5o8hq",
+      "role": "user",
+      "content": "Test message 121",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qf06rbxtq0id",
+      "role": "assistant",
+      "content": "Response 121",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4q65us09b5r8h",
+      "role": "user",
+      "content": "Test message 122",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qv753g7nduw",
+      "role": "assistant",
+      "content": "Response 122",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qk59ifmk03fm",
+      "role": "user",
+      "content": "Test message 123",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4q13ayczx05bop",
+      "role": "assistant",
+      "content": "Response 123",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4ql5t1j6pzqyo",
+      "role": "user",
+      "content": "Test message 124",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4q0r292og6y2mo",
+      "role": "assistant",
+      "content": "Response 124",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4q48gkd5xr80a",
+      "role": "user",
+      "content": "Test message 125",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qsfx99fau44h",
+      "role": "assistant",
+      "content": "Response 125",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qwx8sr58xyes",
+      "role": "user",
+      "content": "Test message 126",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qzed5qxjj17",
+      "role": "assistant",
+      "content": "Response 126",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qu0bc2wj04xj",
+      "role": "user",
+      "content": "Test message 127",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4q9slqhtf1vrv",
+      "role": "assistant",
+      "content": "Response 127",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qkedn9iccz7q",
+      "role": "user",
+      "content": "Test message 128",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qob3h8x0fzt",
+      "role": "assistant",
+      "content": "Response 128",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qvx7o0emo9l",
+      "role": "user",
+      "content": "Test message 129",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qflghboxmcab",
+      "role": "assistant",
+      "content": "Response 129",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qokpt1jzqbq",
+      "role": "user",
+      "content": "Test message 130",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qu8deit914t",
+      "role": "assistant",
+      "content": "Response 130",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qmc9lllc59ln",
+      "role": "user",
+      "content": "Test message 131",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qi53v80qxgrj",
+      "role": "assistant",
+      "content": "Response 131",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qcbar1e5e7kp",
+      "role": "user",
+      "content": "Test message 132",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qhpkypf3uvi",
+      "role": "assistant",
+      "content": "Response 132",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qbsap3oilyc",
+      "role": "user",
+      "content": "Test message 133",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4q8mbe7owviz8",
+      "role": "assistant",
+      "content": "Response 133",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qf4n4iu2oeh",
+      "role": "user",
+      "content": "Test message 134",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qwhcxtn9698j",
+      "role": "assistant",
+      "content": "Response 134",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qkv46jplal4l",
+      "role": "user",
+      "content": "Test message 135",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qpjp1p8d7h2",
+      "role": "assistant",
+      "content": "Response 135",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qiqjujfbi8je",
+      "role": "user",
+      "content": "Test message 136",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qgf1xevgbgt5",
+      "role": "assistant",
+      "content": "Response 136",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qdvjbwhkykd",
+      "role": "user",
+      "content": "Test message 137",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qsuf7nviue5g",
+      "role": "assistant",
+      "content": "Response 137",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qbcs6xg6vbri",
+      "role": "user",
+      "content": "Test message 138",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qcrk8idz8rn",
+      "role": "assistant",
+      "content": "Response 138",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qc2yuoh65k78",
+      "role": "user",
+      "content": "Test message 139",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qqe12mk1f9q",
+      "role": "assistant",
+      "content": "Response 139",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qkj7ct9pmro",
+      "role": "user",
+      "content": "Test message 140",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4q8bwn730knyx",
+      "role": "assistant",
+      "content": "Response 140",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qati7qbyl4we",
+      "role": "user",
+      "content": "Test message 141",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qj7fshtiyhq",
+      "role": "assistant",
+      "content": "Response 141",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qtehbffe8c2",
+      "role": "user",
+      "content": "Test message 142",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qipsg9qyowwr",
+      "role": "assistant",
+      "content": "Response 142",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qvceycfk5q8m",
+      "role": "user",
+      "content": "Test message 143",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qu7f80z8253c",
+      "role": "assistant",
+      "content": "Response 143",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qp6mpsls4hr",
+      "role": "user",
+      "content": "Test message 144",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qrawjo4cqbjd",
+      "role": "assistant",
+      "content": "Response 144",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4q0egdf3qonj9h",
+      "role": "user",
+      "content": "Test message 145",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4q0hsfctt11vw8",
+      "role": "assistant",
+      "content": "Response 145",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4q0jvugukclf5v",
+      "role": "user",
+      "content": "Test message 146",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qz9bb6sd512",
+      "role": "assistant",
+      "content": "Response 146",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qx07j968e1l",
+      "role": "user",
+      "content": "Test message 147",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qi1nsqo34xoa",
+      "role": "assistant",
+      "content": "Response 147",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qxyqu8rb1vs",
+      "role": "user",
+      "content": "Test message 148",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4q2hxkj5ftzp4",
+      "role": "assistant",
+      "content": "Response 148",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qi16l7d8f9cj",
+      "role": "user",
+      "content": "Test message 149",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4qrex52otwrs",
+      "role": "assistant",
+      "content": "Response 149",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4q82y76pp8ejj",
+      "role": "user",
+      "content": "Test message 150",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4q10gu3puzz5b",
+      "role": "assistant",
+      "content": "Response 150",
+      "timestamp": 1773893577194,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "createdAt": 1773893575188,
+    "lastAccessedAt": 1773893577194,
+    "messageCount": 304,
+    "clientInfo": {
+      "userId": "user123",
+      "platform": "web",
+      "ip": "192.168.1.1"
+    }
+  }
+}

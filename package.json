@@ -1,0 +1,25 @@
+{
+  "name": "nexus-command-platform",
+  "version": "1.0.0",
+  "description": "Unified AI Agent Platform - Local-first AI orchestration",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "cli": "node src/cli.js",
+    "test": "node test-all-modules.mjs",
+    "test:modules": "node test-all-modules.mjs",
+    "test:integrations": "node test-integrations.mjs",
+    "lint": "echo \"Linting not configured - would run eslint or similar\"",
+    "typecheck": "echo \"Type checking not configured - would run tsc or similar\"",
+    "prepare": "husky install"
+  },
+  "dependencies": {
+    "@opencode-ai/sdk": "^1.2.27",
+    "better-sqlite3": "^12.8.0",
+    "express": "^5.2.1",
+    "husky": "^9.1.7",
+    "ws": "^8.19.0"
+  }
+}

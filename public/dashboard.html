@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXUS Command Platform - Dashboard</title>
+  <style>
+    :root {
+      --bg-primary: #0f172a;
+      --bg-secondary: #1e293b;
+      --bg-card: #334155;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --accent-purple: #9333ea;
+      --accent-green: #10b981;
+      --accent-yellow: #f59e0b;
+      --accent-cyan: #06b6d4;
+      --accent-pink: #ec4899;
+      --accent-red: #ef4444;
+      --accent-orange: #f97316;
+      --accent-violet: #8b5cf6;
+      --accent-teal: #14b8a6;
+      --accent-slate: #64748b;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+      padding: 1rem 2rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo-icon {
+      font-size: 2rem;
+    }
+
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--bg-card);
+      border-radius: 9999px;
+      font-size: 0.875rem;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .main {
+      padding: 2rem;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: var(--bg-secondary);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      border: 1px solid rgba(255,255,255,0.05);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .card-icon {
+      font-size: 1.5rem;
+    }
+
+    .metric-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .metric-label {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    .agents-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .agent-card {
+      background: var(--bg-card);
+      border-radius: 0.75rem;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: transform 0.2s;
+    }
+
+    .agent-card:hover {
+      transform: scale(1.02);
+    }
+
+    .agent-icon {
+      font-size: 2rem;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0.5rem;
+    }
+
+    .agent-info h3 {
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .agent-info p {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    .agent-status {
+      margin-left: auto;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-weight: 500;
+    }
+
+    .status-idle {
+      background: rgba(148, 163, 184, 0.2);
+      color: var(--text-secondary);
+    }
+
+    .status-working {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--accent-green);
+    }
+
+    .status-standby {
+      background: rgba(6, 182, 212, 0.2);
+      color: var(--accent-cyan);
+    }
+
+    .status-error {
+      background: rgba(239, 68, 68, 0.2);
+      color: var(--accent-red);
+    }
+
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      padding: 0.5rem 1rem;
+      background: var(--bg-card);
+      border: none;
+      border-radius: 0.5rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 0.875rem;
+      transition: all 0.2s;
+    }
+
+    .tab:hover {
+      background: var(--accent-purple);
+      color: white;
+    }
+
+    .tab.active {
+      background: var(--accent-purple);
+      color: white;
+    }
+
+    .console {
+      background: var(--bg-primary);
+      border-radius: 0.75rem;
+      padding: 1rem;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 0.875rem;
+      max-height: 400px;
+      overflow-y: auto;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .console-line {
+      padding: 0.25rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .console-time {
+      color: var(--text-secondary);
+      margin-right: 0.5rem;
+    }
+
+    .console-info { color: var(--accent-cyan); }
+    .console-success { color: var(--accent-green); }
+    .console-warning { color: var(--accent-yellow); }
+    .console-error { color: var(--accent-red); }
+
+    .progress-bar {
+      height: 8px;
+      background: var(--bg-card);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    .chart-container {
+      height: 200px;
+      display: flex;
+      align-items: flex-end;
+      gap: 0.5rem;
+      padding: 1rem 0;
+    }
+
+    .chart-bar {
+      flex: 1;
+      background: linear-gradient(to top, var(--accent-purple), var(--accent-cyan));
+      border-radius: 4px 4px 0 0;
+      min-height: 10px;
+      transition: height 0.3s ease;
+      position: relative;
+    }
+
+    .chart-bar:hover::after {
+      content: attr(data-value);
+      position: absolute;
+      top: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-card);
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      white-space: nowrap;
+    }
+
+.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .btn {
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      border: none;
+      cursor: pointer;
+      font-size: 0.875rem;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--accent-purple);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #7c3aed;
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text-secondary);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-primary);
+    }
+
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .task-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem;
+      background: var(--bg-card);
+      border-radius: 0.5rem;
+    }
+
+    .task-priority {
+      width: 4px;
+      height: 32px;
+      border-radius: 2px;
+    }
+
+    .priority-high { background: var(--accent-red); }
+    .priority-medium { background: var(--accent-yellow); }
+    .priority-low { background: var(--accent-green); }
+
+    .task-content {
+      flex: 1;
+    }
+
+    .task-title {
+      font-size: 0.875rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .task-meta {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .metric-mini {
+      text-align: center;
+      padding: 1rem;
+      background: var(--bg-card);
+      border-radius: 0.5rem;
+    }
+
+    .metric-value-mini {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      display: block;
+    }
+
+    .metric-label-mini {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      display: block;
+      margin-top: 0.25rem;
+    }
+
+    @media (max-width: 768px) {
+      .agents-grid { grid-template-columns: 1fr; }
+      .metrics-grid { grid-template-columns: 1fr; }
+    }
+
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .task-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem;
+      background: var(--bg-card);
+      border-radius: 0.5rem;
+    }
+
+    .task-priority {
+      width: 4px;
+      height: 100%;
+      border-radius: 2px;
+    }
+
+    .priority-high { background: var(--accent-red); }
+    .priority-medium { background: var(--accent-yellow); }
+    .priority-low { background: var(--accent-green); }
+
+    .task-content {
+      flex: 1;
+    }
+
+    .task-title {
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .task-meta {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-top: 0.25rem;
+    }
+
+    .btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--accent-purple);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #7c3aed;
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text-primary);
+    }
+
+    .btn-secondary:hover {
+      background: var(--accent-cyan);
+    }
+
+    .actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .main { padding: 1rem; }
+      .header { padding: 1rem; }
+      .grid { grid-template-columns: 1fr; }
+      .agents-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="logo">
+      <span class="logo-icon">🔮</span>
+      <span class="logo-text">NEXUS Command Platform</span>
+    </div>
+    <div class="status-badge">
+      <span class="status-dot"></span>
+      <span id="platform-status">Operational</span>
+    </div>
+  </header>
+
+  <main class="main">
+    <!-- Stats Overview -->
+    <div class="grid">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Platform Uptime</span>
+          <span class="card-icon">⏱️</span>
+        </div>
+        <div class="metric-value" id="uptime">0d 0h 0m</div>
+        <div class="metric-label">Since last restart</div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Active Tasks</span>
+          <span class="card-icon">📋</span>
+        </div>
+        <div class="metric-value" id="active-tasks">0</div>
+        <div class="metric-label">Currently processing</div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="task-progress" style="width: 0%; background: var(--accent-green);"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Total Tasks Completed</span>
+          <span class="card-icon">✅</span>
+        </div>
+        <div class="metric-value" id="completed-tasks">0</div>
+        <div class="metric-label">All time</div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Average Level</span>
+          <span class="card-icon">📈</span>
+        </div>
+        <div class="metric-value" id="avg-level">1.0</div>
+        <div class="metric-label">Across all agents</div>
+      </div>
+    </div>
+
+    <!-- Agents Section -->
+    <h2 class="section-title" style="margin-top: 2rem;">🤖 AI Agents</h2>
+    <div class="agents-grid" id="agents-grid">
+      <!-- Agents will be populated dynamically -->
+    </div>
+
+    <!-- Task Activity Chart -->
+    <div class="card full-width" style="margin-top: 2rem;">
+      <div class="card-header">
+        <span class="card-title">📊 Task Activity (Last 24 Hours)</span>
+        <div class="tabs">
+          <button class="tab active" data-view="tasks">Tasks</button>
+          <button class="tab" data-view="xp">XP</button>
+          <button class="tab" data-view="errors">Errors</button>
+        </div>
+      </div>
+      <div class="chart-container" id="activity-chart">
+        <!-- Chart bars will be populated dynamically -->
+      </div>
+    </div>
+
+    <!-- Console and Tasks -->
+    <div class="grid" style="margin-top: 2rem;">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">💻 Live Console</span>
+          <button class="btn btn-secondary" onclick="clearConsole()">Clear</button>
+        </div>
+        <div class="console" id="console">
+          <!-- Console lines will be populated dynamically -->
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">📝 Recent Tasks</span>
+          <span class="card-icon">🔄</span>
+        </div>
+        <div class="task-list" id="task-list">
+          <!-- Tasks will be populated dynamically -->
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" onclick="refreshTasks()">Refresh</button>
+          <button class="btn btn-secondary" onclick="exportTasks()">Export</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tools & Integrations -->
+    <div class="card full-width" style="margin-top: 2rem;">
+      <div class="card-header">
+        <span class="card-title">🔧 Available Tools</span>
+      </div>
+      <div class="agents-grid" id="tools-grid">
+        <div class="agent-card">
+          <div class="agent-icon" style="background: rgba(16, 185, 129, 0.2);">📁</div>
+          <div class="agent-info">
+            <h3>File Operations</h3>
+            <p>Read, write, edit files</p>
+          </div>
+          <span class="agent-status status-working">Active</span>
+        </div>
+        <div class="agent-card">
+          <div class="agent-icon" style="background: rgba(6, 182, 212, 0.2);">🖥️</div>
+          <div class="agent-info">
+            <h3>Bash Execution</h3>
+            <p>Run shell commands</p>
+          </div>
+          <span class="agent-status status-working">Active</span>
+        </div>
+        <div class="agent-card">
+          <div class="agent-icon" style="background: rgba(147, 51, 234, 0.2);">🌐</div>
+          <div class="agent-info">
+            <h3>Web Search</h3>
+            <p>Search the web</p>
+          </div>
+          <span class="agent-status status-working">Active</span>
+        </div>
+        <div class="agent-card">
+          <div class="agent-icon" style="background: rgba(245, 158, 11, 0.2);">🔀</div>
+          <div class="agent-info">
+            <h3>Git Integration</h3>
+            <p>Version control</p>
+          </div>
+          <span class="agent-status status-working">Active</span>
+        </div>
+        <div class="agent-card">
+          <div class="agent-icon" style="background: rgba(236, 72, 153, 0.2);">🐳</div>
+          <div class="agent-info">
+            <h3>Docker</h3>
+            <p>Container management</p>
+          </div>
+          <span class="agent-status status-standby">Standby</span>
+        </div>
+        <div class="agent-card">
+          <div class="agent-icon" style="background: rgba(139, 92, 246, 0.2);">🗄️</div>
+          <div class="agent-info">
+            <h3>Database</h3>
+            <p>SQLite queries</p>
+          </div>
+          <span class="agent-status status-working">Active</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Channel Integrations -->
+    <div class="card full-width" style="margin-top: 2rem;">
+      <div class="card-header">
+        <span class="card-title">📡 Channel Integrations</span>
+      </div>
+      <div class="agents-grid" id="channels-grid">
+        <div class="agent-card">
+          <div class="agent-icon" style="background: rgba(99, 102, 241, 0.2);">💬</div>
+          <div class="agent-info">
+            <h3>Discord</h3>
+            <p>Bot integration</p>
+          </div>
+          <span class="agent-status" id="discord-status">Checking...</span>
+        </div>
+        <div class="agent-card">
+          <div class="agent-icon" style="background: rgba(0, 136, 204, 0.2);">✈️</div>
+          <div class="agent-info">
+            <h3>Telegram</h3>
+            <p>Bot integration</p>
+          </div>
+          <span class="agent-status" id="telegram-status">Checking...</span>
+        </div>
+        <div class="agent-card">
+          <div class="agent-icon" style="background: rgba(74, 222, 128, 0.2);">📢</div>
+          <div class="agent-info">
+            <h3>Slack</h3>
+            <p>Workspace integration</p>
+          </div>
+          <span class="agent-status" id="slack-status">Checking...</span>
+        </div>
+        <div class="agent-card">
+          <div class="agent-icon" style="background: rgba(251, 146, 60, 0.2);">🔄</div>
+          <div class="agent-info">
+            <h3>Webhooks</h3>
+            <p>Incoming/outgoing hooks</p>
+          </div>
+          <span class="agent-status status-working">Active</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Security & Rate Limiting -->
+    <div class="grid" style="margin-top: 2rem;">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">🛡️ Security Overview</span>
+        </div>
+        <div class="metrics-grid">
+          <div class="metric-mini">
+            <span class="metric-value-mini" id="rate-limit-remaining">--</span>
+            <span class="metric-label-mini">Requests Remaining</span>
+          </div>
+          <div class="metric-mini">
+            <span class="metric-value-mini" id="webhook-verified">--</span>
+            <span class="metric-label-mini">Webhook Verification</span>
+          </div>
+          <div class="metric-mini">
+            <span class="metric-value-mini" id="api-keys-count">--</span>
+            <span class="metric-label-mini">Active API Keys</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">🔄 Agent Communication</span>
+        </div>
+        <div class="metrics-grid">
+          <div class="metric-mini">
+            <span class="metric-value-mini" id="a2a-agents">--</span>
+            <span class="metric-label-mini">Connected Agents</span>
+          </div>
+          <div class="metric-mini">
+            <span class="metric-value-mini" id="a2a-protocols">--</span>
+            <span class="metric-label-mini">Protocols</span>
+          </div>
+          <div class="metric-mini">
+            <span class="metric-value-mini" id="a2a-messages">--</span>
+            <span class="metric-label-mini">Messages Exchanged</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">💾 Cache Status</span>
+        </div>
+        <div class="metrics-grid">
+          <div class="metric-mini">
+            <span class="metric-value-mini" id="cache-type">--</span>
+            <span class="metric-label-mini">Cache Type</span>
+          </div>
+          <div class="metric-mini">
+            <span class="metric-value-mini" id="cache-entries">--</span>
+            <span class="metric-label-mini">Cached Items</span>
+          </div>
+          <div class="metric-mini">
+            <span class="metric-value-mini" id="cache-connected">--</span>
+            <span class="metric-label-mini">Connected</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // WebSocket connection
+    let ws = null;
+    let reconnectAttempts = 0;
+
+    function connectWebSocket() {
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      ws = new WebSocket(`${protocol}//${window.location.host}`);
+
+      ws.onopen = () => {
+        console.log('Connected to NEXUS');
+        reconnectAttempts = 0;
+        addConsoleLine('Connected to NEXUS platform', 'success');
+      };
+
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        handleWebSocketMessage(data);
+      };
+
+      ws.onclose = () => {
+        addConsoleLine('Disconnected from NEXUS', 'warning');
+        if (reconnectAttempts < 5) {
+          setTimeout(() => {
+            reconnectAttempts++;
+            connectWebSocket();
+          }, 1000 * reconnectAttempts);
+        }
+      };
+
+      ws.onerror = (error) => {
+        addConsoleLine('WebSocket error', 'error');
+      };
+    }
+
+    function handleWebSocketMessage(data) {
+      switch (data.type) {
+        case 'status':
+          updatePlatformStatus(data);
+          break;
+        case 'agent_update':
+          updateAgentStatus(data.agent);
+          break;
+        case 'task_complete':
+          addConsoleLine(`Task completed: ${data.task}`, 'success');
+          break;
+        case 'console':
+          addConsoleLine(data.message, data.level || 'info');
+          break;
+      }
+    }
+
+    // Update functions
+    function updatePlatformStatus(data) {
+      document.getElementById('platform-status').textContent = data.status;
+      document.getElementById('uptime').textContent = formatUptime(data.uptime);
+      document.getElementById('active-tasks').textContent = data.agents?.active || 0;
+      document.getElementById('completed-tasks').textContent = data.agents?.totalTasks || 0;
+      document.getElementById('avg-level').textContent = data.agents?.averageLevel?.toFixed(1) || '1.0';
+
+      const taskProgress = ((data.agents?.active || 0) / (data.agents?.total || 6)) * 100;
+      document.getElementById('task-progress').style.width = `${taskProgress}%`;
+
+      // Update agents
+      if (data.agentsList) {
+        renderAgents(data.agentsList);
+      }
+    }
+
+    function renderAgents(agents) {
+      const grid = document.getElementById('agents-grid');
+      grid.innerHTML = agents.map(agent => `
+        <div class="agent-card" style="border-left: 4px solid ${agent.color};">
+          <div class="agent-icon" style="background: ${agent.color}20;">${agent.icon}</div>
+          <div class="agent-info">
+            <h3>${agent.name}</h3>
+            <p>${agent.role} • Level ${agent.level}</p>
+          </div>
+          <span class="agent-status status-${agent.status.toLowerCase()}">${agent.status}</span>
+        </div>
+      `).join('');
+    }
+
+    function updateAgentStatus(agent) {
+      const card = document.querySelector(`[data-agent-id="${agent.id}"]`);
+      if (card) {
+        const statusBadge = card.querySelector('.agent-status');
+        statusBadge.className = `agent-status status-${agent.status.toLowerCase()}`;
+        statusBadge.textContent = agent.status;
+      }
+    }
+
+    function formatUptime(ms) {
+      const seconds = Math.floor(ms / 1000);
+      const minutes = Math.floor(seconds / 60);
+      const hours = Math.floor(minutes / 60);
+      const days = Math.floor(hours / 24);
+
+      return `${days}d ${hours % 24}h ${minutes % 60}m`;
+    }
+
+    // Console functions
+    function addConsoleLine(message, level = 'info') {
+      const console = document.getElementById('console');
+      const time = new Date().toLocaleTimeString();
+      const line = document.createElement('div');
+      line.className = 'console-line';
+      line.innerHTML = `<span class="console-time">[${time}]</span><span class="console-${level}">${message}</span>`;
+      console.appendChild(line);
+      console.scrollTop = console.scrollHeight;
+    }
+
+    function clearConsole() {
+      document.getElementById('console').innerHTML = '';
+      addConsoleLine('Console cleared', 'info');
+    }
+
+    // Task functions
+    function refreshTasks() {
+      addConsoleLine('Refreshing tasks...', 'info');
+      // Fetch tasks from API
+      fetch('/api/tasks')
+        .then(res => res.json())
+        .then(data => renderTasks(data.tasks))
+        .catch(err => addConsoleLine('Failed to fetch tasks', 'error'));
+    }
+
+    function renderTasks(tasks) {
+      const list = document.getElementById('task-list');
+      if (!tasks || tasks.length === 0) {
+        list.innerHTML = '<div class="task-item"><div class="task-content"><p class="task-title">No recent tasks</p></div></div>';
+        return;
+      }
+
+      list.innerHTML = tasks.slice(0, 5).map(task => `
+        <div class="task-item">
+          <div class="task-priority priority-${task.priority || 'medium'}"></div>
+          <div class="task-content">
+            <p class="task-title">${task.title}</p>
+            <p class="task-meta">${task.agent} • ${task.time}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function exportTasks() {
+      addConsoleLine('Exporting tasks...', 'info');
+      // Implementation would export tasks to file
+    }
+
+    // Chart functions
+    function renderChart() {
+      const chart = document.getElementById('activity-chart');
+      const hours = 24;
+      const bars = [];
+
+      for (let i = 0; i < hours; i++) {
+        const value = Math.floor(Math.random() * 100);
+        bars.push(`<div class="chart-bar" style="height: ${value}%" data-value="${value} tasks"></div>`);
+      }
+
+      chart.innerHTML = bars.join('');
+    }
+
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        renderChart();
+      });
+    });
+
+    // Fetch integration status
+    async function fetchIntegrationStatus() {
+      try {
+        // Discord status
+        const discordRes = await fetch('/api/v4/channels/discord/status');
+        const discordData = await discordRes.json();
+        const discordEl = document.getElementById('discord-status');
+        if (discordData.configured) {
+          discordEl.textContent = 'Connected';
+          discordEl.className = 'agent-status status-working';
+        } else {
+          discordEl.textContent = 'Not Configured';
+          discordEl.className = 'agent-status status-idle';
+        }
+
+        // Telegram status
+        const telegramRes = await fetch('/api/v4/channels/telegram/status');
+        const telegramData = await telegramRes.json();
+        const telegramEl = document.getElementById('telegram-status');
+        if (telegramData.configured) {
+          telegramEl.textContent = 'Connected';
+          telegramEl.className = 'agent-status status-working';
+        } else {
+          telegramEl.textContent = 'Not Configured';
+          telegramEl.className = 'agent-status status-idle';
+        }
+
+        // Slack status
+        const slackRes = await fetch('/api/integrations/slack/status');
+        const slackData = await slackRes.json();
+        const slackEl = document.getElementById('slack-status');
+        if (slackData.configured) {
+          slackEl.textContent = 'Connected';
+          slackEl.className = 'agent-status status-working';
+        } else {
+          slackEl.textContent = 'Not Configured';
+          slackEl.className = 'agent-status status-idle';
+        }
+
+        // Rate limiter stats
+        const rateRes = await fetch('/api/v4/rate-limiter/stats');
+        const rateData = await rateRes.json();
+        if (rateData.success) {
+          document.getElementById('rate-limit-remaining').textContent = rateData.stats.maxRequests;
+        }
+
+        // Webhook verification status
+        const webhookRes = await fetch('/api/v4/webhooks/verify-status');
+        const webhookData = await webhookRes.json();
+        document.getElementById('webhook-verified').textContent = webhookData.secretConfigured ? 'Yes' : 'No';
+
+        // Agent communication stats
+        const commRes = await fetch('/api/v4/communication/stats');
+        const commData = await commRes.json();
+        if (commData.success) {
+          document.getElementById('a2a-agents').textContent = commData.stats.totalAgents;
+          document.getElementById('a2a-protocols').textContent = commData.stats.totalProtocols;
+          document.getElementById('a2a-messages').textContent = commData.stats.totalMessages;
+        }
+
+        // Cache stats
+        const cacheRes = await fetch('/api/v4/cache/stats');
+        const cacheData = await cacheRes.json();
+        if (cacheData.success) {
+          document.getElementById('cache-type').textContent = cacheData.stats.type === 'redis' ? 'Redis' : 'Memory';
+          document.getElementById('cache-entries').textContent = cacheData.stats.entries;
+          document.getElementById('cache-connected').textContent = cacheData.stats.connected ? 'Yes' : 'No';
+        }
+
+      } catch (error) {
+        console.error('Failed to fetch integration status:', error);
+      }
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      connectWebSocket();
+      renderChart();
+      renderTasks([]);
+      fetchIntegrationStatus();
+
+      // Poll for updates
+      setInterval(() => {
+        fetch('/api/metrics')
+          .then(res => res.json())
+          .then(data => updatePlatformStatus(data))
+          .catch(() => {});
+        
+        // Refresh integration status
+        fetchIntegrationStatus();
+      }, 5000);
+
+      addConsoleLine('Dashboard initialized', 'success');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+{
+  "sessionId": "mmwyfo4o63d2gl89h",
+  "agentId": "research-agent",
+  "messages": [
+    {
+      "id": "mmwyfo4oaajc6b9dd0p",
+      "role": "user",
+      "content": "Research quantum computing",
+      "timestamp": 1773893577192,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyfo4o6isxh84iq04",
+      "role": "assistant",
+      "content": "Quantum computing uses qubits...",
+      "timestamp": 1773893577192,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "createdAt": 1773893577192,
+    "lastAccessedAt": 1773893577192,
+    "messageCount": 2,
+    "clientInfo": {
+      "browser": "chrome"
+    }
+  }
+}

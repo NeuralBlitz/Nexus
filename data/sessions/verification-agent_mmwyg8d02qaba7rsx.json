@@ -1,0 +1,26 @@
+{
+  "sessionId": "mmwyg8d02qaba7rsx",
+  "agentId": "verification-agent",
+  "messages": [
+    {
+      "id": "mmwyg8d0vtsdfu7laj",
+      "role": "user",
+      "content": "Test verification",
+      "timestamp": 1773893603412,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyg8d04k5f3uqfhui",
+      "role": "assistant",
+      "content": "Memory system working correctly",
+      "timestamp": 1773893603412,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "createdAt": 1773893603412,
+    "lastAccessedAt": 1773893603412,
+    "messageCount": 2,
+    "clientInfo": {}
+  }
+}

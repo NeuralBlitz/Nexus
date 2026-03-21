@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEURAL COMMAND CENTER v2.0</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg-dark: #050510;
+      --bg-panel: #0d0d1a;
+      --bg-card: #12122a;
+      --border: #1a1a3a;
+      --cyan: #00f0ff;
+      --magenta: #ff00aa;
+      --green: #00ff88;
+      --yellow: #ffcc00;
+      --red: #ff3366;
+      --purple: #8800ff;
+      --orange: #ff6600;
+      --text: #e0e0ff;
+      --text-dim: #6666aa;
+    }
+    body {
+      font-family: 'Share Tech Mono', monospace;
+      background: var(--bg-dark);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .grid-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-image: 
+        linear-gradient(rgba(0,240,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,240,255,0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+      z-index: -1;
+    }
+    header {
+      background: linear-gradient(180deg, var(--bg-panel) 0%, transparent 100%);
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 24px;
+      font-weight: 900;
+      background: linear-gradient(90deg, var(--cyan), var(--magenta));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 3px;
+    }
+    .logo span { font-size: 10px; letter-spacing: 2px; color: var(--cyan); -webkit-text-fill-color: var(--cyan); }
+    .stats-bar { display: flex; gap: 40px; }
+    .stat-item { text-align: center; }
+    .stat-value { font-family: 'Orbitron', sans-serif; font-size: 20px; font-weight: 700; color: var(--cyan); }
+    .stat-label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+    .main-container { display: grid; grid-template-columns: 1fr 380px; gap: 20px; padding: 20px 40px; height: calc(100vh - 90px); }
+    .agents-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+    .agent-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    .agent-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 2px;
+      background: linear-gradient(90deg, var(--agent-color), transparent);
+    }
+    .agent-card.researching { border-color: var(--yellow); box-shadow: 0 0 30px rgba(255,204,0,0.2); }
+    .agent-card.standby { border-color: var(--green); }
+    .agent-card.error { border-color: var(--red); }
+    .agent-header { display: flex; justify-content: space-between; margin-bottom: 15px; }
+    .agent-icon { font-size: 36px; }
+    .agent-status { padding: 4px 10px; border-radius: 4px; font-size: 9px; font-weight: bold; text-transform: uppercase; }
+    .agent-status.researching { background: var(--yellow); color: #000; }
+    .agent-status.standby { background: var(--green); color: #000; }
+    .agent-status.error { background: var(--red); color: #fff; }
+    .agent-name { font-family: 'Orbitron', sans-serif; font-size: 20px; font-weight: 700; color: var(--agent-color); margin-bottom: 5px; }
+    .agent-role { font-size: 10px; color: var(--text-dim); margin-bottom: 15px; }
+    .agent-stats { display: flex; gap: 10px; margin-bottom: 10px; }
+    .agent-stat { flex: 1; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; text-align: center; }
+    .agent-stat-label { font-size: 8px; color: var(--text-dim); }
+    .agent-stat-value { font-size: 14px; font-weight: bold; color: var(--cyan); }
+    .level-badge {
+      position: absolute; top: 15px; right: 15px;
+      background: linear-gradient(135deg, var(--yellow), var(--orange));
+      padding: 3px 8px; border-radius: 4px;
+      font-family: 'Orbitron', sans-serif; font-size: 9px; font-weight: bold; color: #000;
+    }
+    .current-research { font-size: 9px; color: var(--yellow); margin-top: 10px; padding: 8px; background: rgba(255,204,0,0.1); border-radius: 4px; }
+    .right-panel { display: flex; flex-direction: column; gap: 15px; }
+    .panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .panel-header {
+      background: var(--bg-panel);
+      padding: 12px 15px;
+      border-bottom: 1px solid var(--border);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--cyan);
+    }
+    .panel-body { padding: 15px; max-height: 220px; overflow-y: auto; }
+    .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .btn {
+      background: linear-gradient(135deg, var(--bg-panel), var(--bg-card));
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      padding: 12px 15px;
+      border-radius: 6px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.2s ease;
+    }
+    .btn:hover { background: var(--cyan); color: var(--bg-dark); box-shadow: 0 0 20px rgba(0,240,255,0.5); }
+    .btn.magenta { border-color: var(--magenta); color: var(--magenta); }
+    .btn.magenta:hover { background: var(--magenta); color: #fff; box-shadow: 0 0 20px rgba(255,0,170,0.5); }
+    .btn.green { border-color: var(--green); color: var(--green); }
+    .btn.green:hover { background: var(--green); color: var(--bg-dark); }
+    .btn.red { border-color: var(--red); color: var(--red); }
+    .btn.red:hover { background: var(--red); color: #fff; }
+    .btn.full { grid-column: 1 / -1; }
+    .btn.large { padding: 15px; font-size: 12px; font-weight: bold; }
+    .mission-card { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; margin-bottom: 10px; border-left: 3px solid var(--magenta); }
+    .mission-name { font-family: 'Orbitron', sans-serif; font-size: 12px; color: var(--magenta); margin-bottom: 5px; }
+    .mission-topic { font-size: 9px; color: var(--text-dim); margin-bottom: 8px; }
+    .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--cyan), var(--magenta)); transition: width 0.3s ease; }
+    .research-result { background: rgba(0,0,0,0.5); padding: 12px; border-radius: 8px; margin-top: 10px; max-height: 200px; overflow-y: auto; font-size: 10px; line-height: 1.5; }
+    .log-container { font-size: 9px; height: 180px; overflow-y: auto; background: #000; padding: 10px; border-radius: 6px; }
+    .log-entry { padding: 3px 0; border-bottom: 1px solid #111; }
+    .log-time { color: var(--text-dim); margin-right: 8px; }
+    .log-type { margin-right: 8px; font-weight: bold; }
+    .log-type.info { color: var(--cyan); }
+    .log-type.success { color: var(--green); }
+    .log-type.warn { color: var(--yellow); }
+    .log-type.error { color: var(--red); }
+    .log-type.agent { color: var(--magenta); }
+    .log-type.mission { color: var(--orange); }
+    .log-type.system { color: var(--purple); }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg-dark); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    .researching .agent-icon { animation: pulse 1.5s infinite; }
+    .input-group { margin-top: 10px; }
+    .input-group input, .input-group textarea {
+      width: 100%; background: var(--bg-dark); border: 1px solid var(--border);
+      color: var(--text); padding: 10px; border-radius: 6px; font-family: inherit; font-size: 11px;
+    }
+    .input-group textarea { min-height: 60px; resize: vertical; }
+    .input-group label { font-size: 9px; color: var(--text-dim); margin-bottom: 5px; display: block; }
+  </style>
+</head>
+<body>
+  <div class="grid-bg"></div>
+  
+  <header>
+    <div class="logo">NEURAL COMMAND CENTER <span>v2.0 - MULTI-AGENT AI RESEARCH SYSTEM</span></div>
+    <div class="stats-bar">
+      <div class="stat-item"><div class="stat-value" id="stat-agents">0</div><div class="stat-label">Active Agents</div></div>
+      <div class="stat-item"><div class="stat-value" id="stat-missions">0</div><div class="stat-label">Missions Done</div></div>
+      <div class="stat-item"><div class="stat-value" id="stat-research">0</div><div class="stat-label">Research Tasks</div></div>
+      <div class="stat-item"><div class="stat-value" id="stat-tokens">0</div><div class="stat-label">Tokens Used</div></div>
+    </div>
+  </header>
+
+  <div class="main-container">
+    <div class="left-panel">
+      <div class="agents-grid" id="agents-grid"></div>
+      <div id="research-results"></div>
+    </div>
+
+    <div class="right-panel">
+      <div class="panel">
+        <div class="panel-header">⚡ COMMAND CENTER</div>
+        <div class="panel-body">
+          <div class="controls">
+            <button class="btn green large" onclick="executeRaid()">⚔️ EXECUTE RAID (5)</button>
+            <button class="btn magenta large" onclick="executeRaid(10)">💥 MEGA RAID (10)</button>
+            <button class="btn full" onclick="showCustomMission()">🎯 CUSTOM MISSION</button>
+            <button class="btn" onclick="listAgents()">👥 LIST AGENTS</button>
+            <button class="btn" onclick="showStats()">📊 VIEW STATS</button>
+          </div>
+          <div class="input-group" id="custom-mission-form" style="display:none;">
+            <label>MISSION NAME</label>
+            <input type="text" id="mission-name" placeholder="Operation Name...">
+            <label style="margin-top:8px;">RESEARCH TOPIC</label>
+            <textarea id="mission-topic" placeholder="What should the agents research..."></textarea>
+            <button class="btn green full" style="margin-top:10px;" onclick="executeCustomMission()">🚀 LAUNCH MISSION</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">📋 ACTIVE MISSIONS <span id="mission-count"></span></div>
+        <div class="panel-body" id="missions-list"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">📡 SYSTEM LOG</div>
+        <div class="panel-body">
+          <div class="log-container" id="log-container"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let ws, state = { agents: {}, missions: [], completedMissions: [], stats: {}, researchLog: [] };
+
+    const AGENTS = [
+      { id: 'OMEGA', icon: '⚡', color: '#ff0040', role: 'Deep Research' },
+      { id: 'NEXUS', icon: '🔗', color: '#00ff88', role: 'Web Crawler' },
+      { id: 'AETHER', icon: '✨', color: '#8800ff', role: 'Code Architect' },
+      { id: 'ZENITH', icon: '🏔️', color: '#ffcc00', role: 'Analysis Core' },
+      { id: 'VOID', icon: '🌌', color: '#00ccff', role: 'Memory Bank' },
+      { id: 'PRIME', icon: '👑', color: '#ff6600', role: 'Command Unit' }
+    ];
+
+    function connect() {
+      const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+      ws = new WebSocket(`${proto}//${location.host}`);
+      ws.onopen = () => { log('Connected to Neural Command Center', 'system'); render(); };
+      ws.onmessage = (e) => { const msg = JSON.parse(e.data); handleMessage(msg); };
+      ws.onclose = () => { log('Connection lost. Reconnecting...', 'error'); setTimeout(connect, 3000); };
+      ws.onerror = (e) => log('WebSocket error', 'error');
+    }
+
+    function handleMessage(msg) {
+      switch(msg.type) {
+        case 'INIT':
+        case 'STATE':
+          state = msg.state || msg;
+          render();
+          break;
+        case 'AGENT_UPDATE':
+          if (state.agents[msg.agent.id]) {
+            state.agents[msg.agent.id] = { ...state.agents[msg.agent.id], ...msg.agent };
+          } else {
+            state.agents[msg.agent.id] = msg.agent;
+          }
+          renderAgents();
+          break;
+        case 'RESEARCH_COMPLETE':
+          log(`${msg.agent} completed research on: ${msg.topic.substring(0, 50)}...`, 'agent');
+          showResearchResult(msg.agent, msg.topic, msg.content, msg.tokens);
+          render();
+          break;
+        case 'MISSION_START':
+          log(`🎯 Mission started: ${msg.mission.name}`, 'mission');
+          renderMissions();
+          break;
+        case 'MISSION_COMPLETE':
+          log(`🏆 Mission complete: ${msg.mission.name}`, 'mission');
+          renderMissions();
+          break;
+        case 'RAID_START':
+          log(`⚔️ RAID INITIATED: ${msg.missions.length} missions`, 'mission');
+          break;
+        case 'RAID_COMPLETE':
+          log(`⚔️ RAID COMPLETE! Stats: ${msg.stats.totalResearch} research tasks`, 'mission');
+          break;
+        case 'LOG':
+          log(msg.entry.msg, msg.entry.type.toLowerCase());
+          break;
+        case 'STATS_UPDATE':
+          state.stats = msg.stats;
+          Object.keys(msg.agents).forEach(k => state.agents[k] = msg.agents[k]);
+          renderStats();
+          break;
+        case 'RESEARCH_RESULT':
+          showDirectResult(msg.result);
+          break;
+        case 'AI_RESULT':
+          showDirectResult(msg.result);
+          break;
+        case 'ERROR':
+          log(`Error: ${msg.error}`, 'error');
+          break;
+      }
+    }
+
+    function send(cmd) { if (ws?.readyState === WebSocket.OPEN) ws.send(JSON.stringify(cmd)); }
+
+    function log(msg, type = 'info') {
+      const container = document.getElementById('log-container');
+      const time = new Date().toLocaleTimeString();
+      const entry = document.createElement('div');
+      entry.className = 'log-entry';
+      entry.innerHTML = `<span class="log-time">${time}</span><span class="log-type ${type}">[${type.toUpperCase()}]</span>${msg}`;
+      container.insertBefore(entry, container.firstChild);
+      if (container.children.length > 100) container.removeChild(container.lastChild);
+    }
+
+    function render() { renderAgents(); renderStats(); renderMissions(); }
+
+    function renderAgents() {
+      const grid = document.getElementById('agents-grid');
+      grid.innerHTML = AGENTS.map(a => {
+        const agent = state.agents[a.id] || { status: 'STANDBY', missionsCompleted: 0, level: 1, xp: 0, currentResearch: null };
+        return `
+          <div class="agent-card ${agent.status.toLowerCase()}" style="--agent-color: ${a.color}">
+            <div class="level-badge">LVL ${agent.level || 1}</div>
+            <div class="agent-header">
+              <span class="agent-icon">${a.icon}</span>
+              <span class="agent-status ${agent.status.toLowerCase()}">${agent.status}</span>
+            </div>
+            <div class="agent-name">${a.id}</div>
+            <div class="agent-role">${a.role}</div>
+            <div class="agent-stats">
+              <div class="agent-stat"><div class="agent-stat-label">MISSIONS</div><div class="agent-stat-value">${agent.missionsCompleted || 0}</div></div>
+              <div class="agent-stat"><div class="agent-stat-label">XP</div><div class="agent-stat-value">${agent.xp || 0}</div></div>
+            </div>
+            ${agent.currentResearch ? `<div class="current-research">📡 ${agent.currentResearch.substring(0, 40)}...</div>` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderStats() {
+      const active = Object.values(state.agents).filter(a => a.status === 'RESEARCHING').length;
+      document.getElementById('stat-agents').textContent = active;
+      document.getElementById('stat-missions').textContent = state.stats.totalMissions || 0;
+      document.getElementById('stat-research').textContent = state.stats.totalResearch || 0;
+      document.getElementById('stat-tokens').textContent = formatNum(state.stats.tokensUsed || 0);
+    }
+
+    function renderMissions() {
+      const container = document.getElementById('missions-list');
+      const active = [...(state.missions || []), ...(state.completedMissions || [])].slice(-10).reverse();
+      document.getElementById('mission-count').textContent = active.length;
+      container.innerHTML = active.length ? active.map(m => `
+        <div class="mission-card">
+          <div class="mission-name">${m.name}</div>
+          <div class="mission-topic">${m.topic?.substring(0, 60)}...</div>
+          <div class="progress-bar"><div class="progress-fill" style="width: ${m.progress || 0}%"></div></div>
+        </div>
+      `).join('') : '<div style="color:var(--text-dim);text-align:center;padding:20px;">No active missions</div>';
+    }
+
+    function formatNum(n) { return n >= 1000000 ? (n/1000000).toFixed(1)+'M' : n >= 1000 ? (n/1000).toFixed(1)+'K' : n; }
+
+    function showResearchResult(agent, topic, content, tokens) {
+      const container = document.getElementById('research-results');
+      const div = document.createElement('div');
+      div.className = 'panel';
+      div.style.marginTop = '15px';
+      div.innerHTML = `
+        <div class="panel-header">📊 ${agent} RESEARCH RESULT <span style="color:var(--green)">+${tokens} tokens</span></div>
+        <div class="panel-body" style="max-height:300px;">
+          <div style="font-size:10px;color:var(--yellow);margin-bottom:10px;">Topic: ${topic.substring(0, 80)}...</div>
+          <div class="research-result">${content.substring(0, 2000)}${content.length > 2000 ? '...' : ''}</div>
+        </div>
+      `;
+      container.insertBefore(div, container.firstChild);
+      if (container.children.length > 5) container.removeChild(container.lastChild);
+    }
+
+    function showDirectResult(result) {
+      const content = result.choices?.[0]?.message?.content || JSON.stringify(result);
+      showResearchResult('DIRECT', 'Custom Query', content, result.usage?.total_tokens || 0);
+    }
+
+    function showCustomMission() {
+      const form = document.getElementById('custom-mission-form');
+      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function executeRaid(count = 5) {
+      log(`⚔️ Initiating RAID with ${count} missions...`, 'mission');
+      send({ type: 'EXECUTE_RAID', count });
+    }
+
+    function executeCustomMission() {
+      const name = document.getElementById('mission-name').value || 'Custom Operation';
+      const topic = document.getElementById('mission-topic').value;
+      if (!topic) { alert('Please enter a research topic'); return; }
+      log(`🎯 Launching custom mission: ${name}`, 'mission');
+      send({ type: 'EXECUTE_MISSION', name, topic });
+      document.getElementById('custom-mission-form').style.display = 'none';
+    }
+
+    function listAgents() {
+      log('=== AGENT ROSTER ===', 'system');
+      AGENTS.forEach(a => {
+        const agent = state.agents[a.id] || {};
+        log(`${a.icon} ${a.id} - ${a.role} - Status: ${agent.status || 'UNKNOWN'} - Missions: ${agent.missionsCompleted || 0}`, 'agent');
+      });
+    }
+
+    function showStats() {
+      const s = state.stats;
+      log('=== COMMAND CENTER STATS ===', 'system');
+      log(`Total Missions: ${s.totalMissions || 0}`, 'info');
+      log(`Total Research: ${s.totalResearch || 0}`, 'info');
+      log(`Tokens Used: ${formatNum(s.tokensUsed || 0)}`, 'info');
+      log(`Uptime: ${Math.round((Date.now() - (s.uptime || Date.now())) / 60000)} min`, 'info');
+    }
+
+    connect();
+  </script>
+</body>
+</html>

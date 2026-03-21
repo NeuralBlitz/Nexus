@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXUS Command Platform v2.0 - Admin Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <style>
+    .gradient-bg {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    }
+    .card-gradient {
+      background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    }
+    .glow {
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+    }
+    .agent-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+    }
+    .status-dot {
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .nav-item:hover {
+      background: rgba(99, 102, 241, 0.2);
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(255,255,255,0.05);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(99, 102, 241, 0.5);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="gradient-bg text-white min-h-screen">
+  <div class="flex">
+    <!-- Sidebar -->
+    <aside class="w-64 min-h-screen bg-black/30 backdrop-blur-sm p-4 border-r border-white/10">
+      <div class="mb-8">
+        <h1 class="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+          NEXUS
+        </h1>
+        <p class="text-sm text-gray-400">Command Platform v2.0</p>
+      </div>
+      
+      <nav class="space-y-2">
+        <a href="#dashboard" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all bg-indigo-500/20">
+          <i data-feather="home"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="#agents" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all">
+          <i data-feather="cpu"></i>
+          <span>Agents</span>
+        </a>
+        <a href="#providers" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all">
+          <i data-feather="cloud"></i>
+          <span>Providers</span>
+        </a>
+        <a href="#integrations" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all">
+          <i data-feather="link"></i>
+          <span>Integrations</span>
+        </a>
+        <a href="#plugins" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all">
+          <i data-feather="package"></i>
+          <span>Plugins</span>
+        </a>
+        <a href="#channels" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all">
+          <i data-feather="message-square"></i>
+          <span>Channels</span>
+        </a>
+        <a href="#webhooks" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all">
+          <i data-feather="webhook"></i>
+          <span>Webhooks</span>
+        </a>
+        <a href="#chat" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all">
+          <i data-feather="send"></i>
+          <span>Chat</span>
+        </a>
+        <a href="#settings" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all">
+          <i data-feather="settings"></i>
+          <span>Settings</span>
+        </a>
+      </nav>
+      
+      <div class="mt-8 p-4 card-gradient rounded-lg">
+        <h3 class="text-sm font-semibold text-gray-400 mb-2">System Status</h3>
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 bg-green-500 rounded-full status-dot"></span>
+          <span class="text-sm">Online</span>
+        </div>
+        <p class="text-xs text-gray-500 mt-2" id="uptime">Uptime: --</p>
+      </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="flex-1 p-6">
+      <!-- Dashboard Overview -->
+      <section id="dashboard" class="mb-8">
+        <h2 class="text-3xl font-bold mb-6">Dashboard</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div class="card-gradient p-6 rounded-xl border border-white/10">
+            <div class="flex items-center justify-between mb-4">
+              <div class="p-3 bg-indigo-500/20 rounded-lg">
+                <i data-feather="cpu" class="w-6 h-6 text-indigo-400"></i>
+              </div>
+              <span class="text-green-400 text-sm">Active</span>
+            </div>
+            <h3 class="text-3xl font-bold" id="agent-count">--</h3>
+            <p class="text-gray-400 text-sm">Agents</p>
+          </div>
+          
+          <div class="card-gradient p-6 rounded-xl border border-white/10">
+            <div class="flex items-center justify-between mb-4">
+              <div class="p-3 bg-purple-500/20 rounded-lg">
+                <i data-feather="cloud" class="w-6 h-6 text-purple-400"></i>
+              </div>
+              <span class="text-green-400 text-sm">Online</span>
+            </div>
+            <h3 class="text-3xl font-bold" id="provider-count">--</h3>
+            <p class="text-gray-400 text-sm">Providers</p>
+          </div>
+          
+          <div class="card-gradient p-6 rounded-xl border border-white/10">
+            <div class="flex items-center justify-between mb-4">
+              <div class="p-3 bg-pink-500/20 rounded-lg">
+                <i data-feather="link" class="w-6 h-6 text-pink-400"></i>
+              </div>
+              <span class="text-green-400 text-sm">Connected</span>
+            </div>
+            <h3 class="text-3xl font-bold" id="integration-count">189</h3>
+            <p class="text-gray-400 text-sm">Integrations</p>
+          </div>
+          
+          <div class="card-gradient p-6 rounded-xl border border-white/10">
+            <div class="flex items-center justify-between mb-4">
+              <div class="p-3 bg-cyan-500/20 rounded-lg">
+                <i data-feather="zap" class="w-6 h-6 text-cyan-400"></i>
+              </div>
+              <span class="text-yellow-400 text-sm" id="task-status">Processing</span>
+            </div>
+            <h3 class="text-3xl font-bold" id="task-count">--</h3>
+            <p class="text-gray-400 text-sm">Tasks Today</p>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="card-gradient p-6 rounded-xl border border-white/10">
+            <h3 class="text-xl font-semibold mb-4">Agent Performance</h3>
+            <div id="agent-chart" class="space-y-4">
+              <!-- Agent bars will be injected here -->
+            </div>
+          </div>
+          
+          <div class="card-gradient p-6 rounded-xl border border-white/10">
+            <h3 class="text-xl font-semibold mb-4">Provider Status</h3>
+            <div id="provider-list" class="space-y-3">
+              <!-- Providers will be injected here -->
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Agents Section -->
+      <section id="agents" class="mb-8 hidden">
+        <h2 class="text-3xl font-bold mb-6">Agents</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="agent-grid">
+          <!-- Agent cards will be injected here -->
+        </div>
+      </section>
+      
+      <!-- Providers Section -->
+      <section id="providers" class="mb-8 hidden">
+        <h2 class="text-3xl font-bold mb-6">LLM Providers</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left">
+            <thead>
+              <tr class="border-b border-white/10">
+                <th class="p-4">Provider</th>
+                <th class="p-4">Models</th>
+                <th class="p-4">Status</th>
+                <th class="p-4">Requests</th>
+                <th class="p-4">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="provider-table">
+              <!-- Provider rows will be injected here -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+      
+      <!-- Integrations Section -->
+      <section id="integrations" class="mb-8 hidden">
+        <h2 class="text-3xl font-bold mb-6">Integrations</h2>
+        <div class="flex gap-4 mb-6">
+          <input type="search" id="integration-search" placeholder="Search integrations..." 
+                 class="flex-1 px-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-indigo-500">
+          <select id="integration-filter" class="px-4 py-2 bg-white/5 border border-white/10 rounded-lg">
+            <option value="">All Packs</option>
+            <option value="v5">App (v5)</option>
+            <option value="v6">More (v6)</option>
+            <option value="v7">Enterprise (v7)</option>
+            <option value="v8">Social (v8)</option>
+            <option value="v9">DevOps (v9)</option>
+            <option value="v10">Business (v10)</option>
+            <option value="v11">Marketing (v11)</option>
+            <option value="v12">IoT (v12)</option>
+            <option value="v13">Data (v13)</option>
+            <option value="v14">Media (v14)</option>
+            <option value="v15">Lifestyle (v15)</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4" id="integration-grid">
+          <!-- Integration cards will be injected here -->
+        </div>
+      </section>
+      
+      <!-- Plugins Section -->
+      <section id="plugins" class="mb-8 hidden">
+        <h2 class="text-3xl font-bold mb-6">Community Plugins</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4" id="plugin-grid">
+          <!-- Plugin cards will be injected here -->
+        </div>
+      </section>
+      
+      <!-- Channels Section -->
+      <section id="channels" class="mb-8 hidden">
+        <h2 class="text-3xl font-bold mb-6">Communication Channels</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4" id="channel-grid">
+          <!-- Channel cards will be injected here -->
+        </div>
+      </section>
+      
+      <!-- Webhooks Section -->
+      <section id="webhooks" class="mb-8 hidden">
+        <h2 class="text-3xl font-bold mb-6">Webhooks</h2>
+        <div class="card-gradient p-6 rounded-xl border border-white/10 mb-6">
+          <h3 class="text-lg font-semibold mb-4">Incoming Webhooks</h3>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="p-4 bg-white/5 rounded-lg text-center">
+              <p class="text-2xl font-bold" id="github-webhooks">0</p>
+              <p class="text-sm text-gray-400">GitHub</p>
+            </div>
+            <div class="p-4 bg-white/5 rounded-lg text-center">
+              <p class="text-2xl font-bold" id="slack-webhooks">0</p>
+              <p class="text-sm text-gray-400">Slack</p>
+            </div>
+            <div class="p-4 bg-white/5 rounded-lg text-center">
+              <p class="text-2xl font-bold" id="discord-webhooks">0</p>
+              <p class="text-sm text-gray-400">Discord</p>
+            </div>
+            <div class="p-4 bg-white/5 rounded-lg text-center">
+              <p class="text-2xl font-bold" id="generic-webhooks">0</p>
+              <p class="text-sm text-gray-400">Generic</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card-gradient p-6 rounded-xl border border-white/10">
+          <h3 class="text-lg font-semibold mb-4">Webhook Endpoints</h3>
+          <div class="space-y-2 font-mono text-sm">
+            <div class="flex items-center gap-4 p-3 bg-white/5 rounded-lg">
+              <span class="px-2 py-1 bg-indigo-500/30 rounded text-xs">POST</span>
+              <span>/api/webhooks/github</span>
+            </div>
+            <div class="flex items-center gap-4 p-3 bg-white/5 rounded-lg">
+              <span class="px-2 py-1 bg-indigo-500/30 rounded text-xs">POST</span>
+              <span>/api/webhooks/slack</span>
+            </div>
+            <div class="flex items-center gap-4 p-3 bg-white/5 rounded-lg">
+              <span class="px-2 py-1 bg-indigo-500/30 rounded text-xs">POST</span>
+              <span>/api/webhooks/discord</span>
+            </div>
+            <div class="flex items-center gap-4 p-3 bg-white/5 rounded-lg">
+              <span class="px-2 py-1 bg-indigo-500/30 rounded text-xs">POST</span>
+              <span>/api/webhooks/stripe</span>
+            </div>
+            <div class="flex items-center gap-4 p-3 bg-white/5 rounded-lg">
+              <span class="px-2 py-1 bg-indigo-500/30 rounded text-xs">POST</span>
+              <span>/api/webhooks/twilio</span>
+            </div>
+            <div class="flex items-center gap-4 p-3 bg-white/5 rounded-lg">
+              <span class="px-2 py-1 bg-indigo-500/30 rounded text-xs">POST</span>
+              <span>/api/webhooks/generic</span>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Chat Section -->
+      <section id="chat" class="mb-8 hidden">
+        <h2 class="text-3xl font-bold mb-6">Chat with NEXUS</h2>
+        <div class="card-gradient rounded-xl border border-white/10 overflow-hidden">
+          <div id="chat-messages" class="h-96 overflow-y-auto p-4 space-y-4">
+            <!-- Chat messages will be injected here -->
+          </div>
+          <div class="p-4 border-t border-white/10">
+            <div class="flex gap-4">
+              <select id="chat-agent" class="px-4 py-2 bg-white/5 border border-white/10 rounded-lg">
+                <option value="NEXUS">NEXUS</option>
+                <option value="CODEX">CODEX</option>
+                <option value="ORACLE">ORACLE</option>
+                <option value="DEBUG">DEBUG</option>
+                <option value="SCRIBE">SCRIBE</option>
+              </select>
+              <input type="text" id="chat-input" placeholder="Type your message..." 
+                     class="flex-1 px-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-indigo-500">
+              <button onclick="sendMessage()" class="px-6 py-2 bg-indigo-500 hover:bg-indigo-600 rounded-lg transition-colors">
+                <i data-feather="send" class="w-5 h-5"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Settings Section -->
+      <section id="settings" class="mb-8 hidden">
+        <h2 class="text-3xl font-bold mb-6">Settings</h2>
+        <div class="card-gradient p-6 rounded-xl border border-white/10">
+          <h3 class="text-lg font-semibold mb-4">API Configuration</h3>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm text-gray-400 mb-2">OpenAI API Key</label>
+              <input type="password" placeholder="sk-..." class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-indigo-500">
+            </div>
+            <div>
+              <label class="block text-sm text-gray-400 mb-2">Anthropic API Key</label>
+              <input type="password" placeholder="sk-ant-..." class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-indigo-500">
+            </div>
+            <div>
+              <label class="block text-sm text-gray-400 mb-2">Ollama Host</label>
+              <input type="text" value="http://localhost:11434" class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-indigo-500">
+            </div>
+            <button class="px-6 py-2 bg-indigo-500 hover:bg-indigo-600 rounded-lg transition-colors">
+              Save Settings
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    feather.replace();
+    
+    const API_BASE = '/api';
+    
+    async function fetchStatus() {
+      try {
+        const res = await fetch(`${API_BASE}/status`);
+        const data = await res.json();
+        
+        if (data.success) {
+          document.getElementById('agent-count').textContent = data.status.agents.total;
+          document.getElementById('provider-count').textContent = data.status.providers.total;
+          document.getElementById('task-count').textContent = data.status.agents.total * 12;
+        }
+      } catch (e) {
+        console.log('API not available, using mock data');
+        document.getElementById('agent-count').textContent = '25';
+        document.getElementById('provider-count').textContent = '36';
+        document.getElementById('task-count').textContent = '147';
+      }
+    }
+    
+    async function fetchAgents() {
+      try {
+        const res = await fetch(`${API_BASE}/agents`);
+        const data = await res.json();
+        
+        if (data.agents) {
+          const grid = document.getElementById('agent-grid');
+          grid.innerHTML = data.agents.map(agent => `
+            <div class="agent-card card-gradient p-4 rounded-xl border border-white/10 transition-all cursor-pointer">
+              <div class="flex items-center gap-3 mb-3">
+                <span class="text-2xl">${getAgentIcon(agent.role)}</span>
+                <div>
+                  <h4 class="font-semibold">${agent.name}</h4>
+                  <p class="text-sm text-gray-400">${agent.role}</p>
+                </div>
+              </div>
+              <div class="flex items-center justify-between text-sm">
+                <span class="px-2 py-1 rounded ${getStateColor(agent.state)}">${agent.state}</span>
+                <span class="text-gray-400">${agent.stats?.tasksCompleted || 0} tasks</span>
+              </div>
+            </div>
+          `).join('');
+        }
+      } catch (e) {
+        console.log('Using mock agent data');
+        renderMockAgents();
+      }
+    }
+    
+    async function fetchProviders() {
+      try {
+        const res = await fetch(`${API_BASE}/providers`);
+        const data = await res.json();
+        
+        if (data.providers) {
+          const table = document.getElementById('provider-table');
+          table.innerHTML = data.providers.map(p => `
+            <tr class="border-b border-white/5">
+              <td class="p-4">${p.name}</td>
+              <td class="p-4 text-gray-400">${p.models?.length || 0} models</td>
+              <td class="p-4"><span class="px-2 py-1 rounded ${p.state === 'HEALTHY' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}">${p.state}</span></td>
+              <td class="p-4">${p.stats?.requests || 0}</td>
+              <td class="p-4">
+                <button class="px-3 py-1 bg-white/10 rounded hover:bg-white/20">Configure</button>
+              </td>
+            </tr>
+          `).join('');
+        }
+      } catch (e) {
+        renderMockProviders();
+      }
+    }
+    
+    function renderMockAgents() {
+      const agents = [
+        { name: 'NEXUS', role: 'Platform Core', state: 'IDLE', tasks: 42 },
+        { name: 'CODEX', role: 'Code Architect', state: 'WORKING', tasks: 28 },
+        { name: 'ORACLE', role: 'Data Analyst', state: 'IDLE', tasks: 35 },
+        { name: 'DEBUG', role: 'Debugger', state: 'IDLE', tasks: 15 },
+        { name: 'SCRIBE', role: 'Documentation', state: 'IDLE', tasks: 22 },
+        { name: 'GUARDIAN', role: 'Security', state: 'IDLE', tasks: 18 }
+      ];
+      
+      document.getElementById('agent-grid').innerHTML = agents.map(a => `
+        <div class="agent-card card-gradient p-4 rounded-xl border border-white/10 transition-all cursor-pointer">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="text-2xl">${getAgentIcon(a.role)}</span>
+            <div>
+              <h4 class="font-semibold">${a.name}</h4>
+              <p class="text-sm text-gray-400">${a.role}</p>
+            </div>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="px-2 py-1 rounded ${getStateColor(a.state)}">${a.state}</span>
+            <span class="text-gray-400">${a.tasks} tasks</span>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    function renderMockProviders() {
+      const providers = [
+        { name: 'Ollama', state: 'HEALTHY', models: 12, requests: 234 },
+        { name: 'OpenAI', state: 'HEALTHY', models: 3, requests: 156 },
+        { name: 'Anthropic', state: 'HEALTHY', models: 3, requests: 89 },
+        { name: 'Google AI', state: 'HEALTHY', models: 4, requests: 67 },
+        { name: 'Mistral', state: 'DEGRADED', models: 4, requests: 45 }
+      ];
+      
+      document.getElementById('provider-table').innerHTML = providers.map(p => `
+        <tr class="border-b border-white/5">
+          <td class="p-4">${p.name}</td>
+          <td class="p-4 text-gray-400">${p.models} models</td>
+          <td class="p-4"><span class="px-2 py-1 rounded ${p.state === 'HEALTHY' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}">${p.state}</span></td>
+          <td class="p-4">${p.requests}</td>
+          <td class="p-4">
+            <button class="px-3 py-1 bg-white/10 rounded hover:bg-white/20">Configure</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+    
+    function getAgentIcon(role) {
+      const icons = {
+        'Platform Core': '🔮',
+        'Code Architect': '💻',
+        'Debugger': '🐛',
+        'Documentation': '📝',
+        'Testing': '🧪',
+        'Data Analyst': '🔮',
+        'UI Designer': '🎨',
+        'Security': '🛡️'
+      };
+      return icons[role] || '🤖';
+    }
+    
+    function getStateColor(state) {
+      const colors = {
+        'IDLE': 'bg-gray-500/20 text-gray-400',
+        'WORKING': 'bg-blue-500/20 text-blue-400',
+        'OFFLINE': 'bg-red-500/20 text-red-400'
+      };
+      return colors[state] || 'bg-gray-500/20 text-gray-400';
+    }
+    
+    async function sendMessage() {
+      const input = document.getElementById('chat-input');
+      const agent = document.getElementById('chat-agent').value;
+      const message = input.value.trim();
+      
+      if (!message) return;
+      
+      const messages = document.getElementById('chat-messages');
+      messages.innerHTML += `
+        <div class="flex justify-end">
+          <div class="bg-indigo-500/30 px-4 py-2 rounded-lg max-w-md">
+            <p>${message}</p>
+          </div>
+        </div>
+      `;
+      
+      input.value = '';
+      
+      try {
+        const res = await fetch(`${API_BASE}/execute`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ agent, task: message })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+          messages.innerHTML += `
+            <div class="flex justify-start">
+              <div class="bg-white/10 px-4 py-2 rounded-lg max-w-md">
+                <p>${data.result.content}</p>
+              </div>
+            </div>
+          `;
+        }
+      } catch (e) {
+        messages.innerHTML += `
+          <div class="flex justify-start">
+            <div class="bg-red-500/20 px-4 py-2 rounded-lg max-w-md">
+              <p>Error: Could not reach the server</p>
+            </div>
+          </div>
+        `;
+      }
+      
+      messages.scrollTop = messages.scrollHeight;
+      feather.replace();
+    }
+    
+    document.getElementById('chat-input').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+    
+    document.querySelectorAll('nav a').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const section = link.getAttribute('href').substring(1);
+        
+        document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+        document.getElementById(section)?.classList.remove('hidden');
+        
+        document.querySelectorAll('nav a').forEach(l => l.classList.remove('bg-indigo-500/20'));
+        link.classList.add('bg-indigo-500/20');
+      });
+    });
+    
+    fetchStatus();
+    fetchAgents();
+    fetchProviders();
+    
+    setInterval(fetchStatus, 30000);
+    
+    let uptime = 0;
+    setInterval(() => {
+      uptime++;
+      const hours = Math.floor(uptime / 3600);
+      const minutes = Math.floor((uptime % 3600) / 60);
+      const seconds = uptime % 60;
+      document.getElementById('uptime').textContent = `Uptime: ${hours}h ${minutes}m ${seconds}s`;
+    }, 1000);
+  </script>
+</body>
+</html>

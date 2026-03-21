@@ -1,0 +1,786 @@
+{
+  "sessionId": "mmwyfecq0o691gg3z",
+  "agentId": "research-agent",
+  "messages": [
+    {
+      "id": "mmwyffwfliojbusyklk",
+      "role": "user",
+      "content": "Test message 96",
+      "timestamp": 1773893566527,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwftslrqvuzgw",
+      "role": "assistant",
+      "content": "Response 96",
+      "timestamp": 1773893566527,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwfg1lzr5zwdem",
+      "role": "user",
+      "content": "Test message 97",
+      "timestamp": 1773893566527,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwf9of59wzpqpu",
+      "role": "assistant",
+      "content": "Response 97",
+      "timestamp": 1773893566527,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwf5qk05go5dq5",
+      "role": "user",
+      "content": "Test message 98",
+      "timestamp": 1773893566527,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwf4iomuyc9t1e",
+      "role": "assistant",
+      "content": "Response 98",
+      "timestamp": 1773893566527,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwfgtxymgwn2lj",
+      "role": "user",
+      "content": "Test message 99",
+      "timestamp": 1773893566527,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwfzix6db6opr9",
+      "role": "assistant",
+      "content": "Response 99",
+      "timestamp": 1773893566527,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwf3lmy7j9j233",
+      "role": "user",
+      "content": "Test message 100",
+      "timestamp": 1773893566527,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwflep18tkdoe9",
+      "role": "assistant",
+      "content": "Response 100",
+      "timestamp": 1773893566527,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwfz26zvo92lh",
+      "role": "user",
+      "content": "Test message 101",
+      "timestamp": 1773893566527,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwfthfjnvgbi29",
+      "role": "assistant",
+      "content": "Response 101",
+      "timestamp": 1773893566527,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwfr41owaisbbb",
+      "role": "user",
+      "content": "Test message 102",
+      "timestamp": 1773893566527,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwfylei0rr1d3",
+      "role": "assistant",
+      "content": "Response 102",
+      "timestamp": 1773893566527,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwfo4nfnki602",
+      "role": "user",
+      "content": "Test message 103",
+      "timestamp": 1773893566527,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwfqyhjyrxx6jh",
+      "role": "assistant",
+      "content": "Response 103",
+      "timestamp": 1773893566527,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwfq3ktjl5apin",
+      "role": "user",
+      "content": "Test message 104",
+      "timestamp": 1773893566527,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwfhz5k24r0bns",
+      "role": "assistant",
+      "content": "Response 104",
+      "timestamp": 1773893566527,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwf334dzu50a3j",
+      "role": "user",
+      "content": "Test message 105",
+      "timestamp": 1773893566527,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwh46x83o6smnk",
+      "role": "assistant",
+      "content": "Response 105",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhyocbxpyrly",
+      "role": "user",
+      "content": "Test message 106",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwh66c8ju9ulw9",
+      "role": "assistant",
+      "content": "Response 106",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhd2w9809qy6b",
+      "role": "user",
+      "content": "Test message 107",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhd5g4opk96op",
+      "role": "assistant",
+      "content": "Response 107",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhwa0gixnp8db",
+      "role": "user",
+      "content": "Test message 108",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwh0xgmv0bmz9r",
+      "role": "assistant",
+      "content": "Response 108",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhd0i6rz4iifl",
+      "role": "user",
+      "content": "Test message 109",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhhphxhaedjf",
+      "role": "assistant",
+      "content": "Response 109",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhxpbyx9ocjcp",
+      "role": "user",
+      "content": "Test message 110",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhs0cx7ow95x",
+      "role": "assistant",
+      "content": "Response 110",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhp4o2i0brlkl",
+      "role": "user",
+      "content": "Test message 111",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhan5nx51we5s",
+      "role": "assistant",
+      "content": "Response 111",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhbpg6z7mf3iw",
+      "role": "user",
+      "content": "Test message 112",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhmlteq1e01g",
+      "role": "assistant",
+      "content": "Response 112",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwh23zb9edyai6",
+      "role": "user",
+      "content": "Test message 113",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhem8lkot6ksh",
+      "role": "assistant",
+      "content": "Response 113",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhodhbzs81p0m",
+      "role": "user",
+      "content": "Test message 114",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhzjr8hyq5qu",
+      "role": "assistant",
+      "content": "Response 114",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhrjsyv32xlx",
+      "role": "user",
+      "content": "Test message 115",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwh99fah4fim1v",
+      "role": "assistant",
+      "content": "Response 115",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhvrh84sfklwr",
+      "role": "user",
+      "content": "Test message 116",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwh8uwzajode6m",
+      "role": "assistant",
+      "content": "Response 116",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhec6lnyzajt",
+      "role": "user",
+      "content": "Test message 117",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhzgoc311az3b",
+      "role": "assistant",
+      "content": "Response 117",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwh1rkkua42mh8",
+      "role": "user",
+      "content": "Test message 118",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhavghyciv95g",
+      "role": "assistant",
+      "content": "Response 118",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhdg8z2bw63zq",
+      "role": "user",
+      "content": "Test message 119",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwh6z3yvrxgoho",
+      "role": "assistant",
+      "content": "Response 119",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhd22f5exft4m",
+      "role": "user",
+      "content": "Test message 120",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwh2lvmxaznnt7",
+      "role": "assistant",
+      "content": "Response 120",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhwbtrxlj3o78",
+      "role": "user",
+      "content": "Test message 121",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhtt14wqgojgj",
+      "role": "assistant",
+      "content": "Response 121",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhh8ti4nsn2j6",
+      "role": "user",
+      "content": "Test message 122",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhu204w5ne8v8",
+      "role": "assistant",
+      "content": "Response 122",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhtlp7nuq3ngh",
+      "role": "user",
+      "content": "Test message 123",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhs0wdymgkp1",
+      "role": "assistant",
+      "content": "Response 123",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwh28virvk9lyq",
+      "role": "user",
+      "content": "Test message 124",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhnf0zk9z08jt",
+      "role": "assistant",
+      "content": "Response 124",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwh8lepscn4xcp",
+      "role": "user",
+      "content": "Test message 125",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhwfz65v4rmeg",
+      "role": "assistant",
+      "content": "Response 125",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhhcvjiw7qphu",
+      "role": "user",
+      "content": "Test message 126",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwh3mqest3o2cc",
+      "role": "assistant",
+      "content": "Response 126",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhmft5sogim3b",
+      "role": "user",
+      "content": "Test message 127",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhqkuria2n1z8",
+      "role": "assistant",
+      "content": "Response 127",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhmjyskri1o3m",
+      "role": "user",
+      "content": "Test message 128",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhpfa8tvq6sq9",
+      "role": "assistant",
+      "content": "Response 128",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhhaewvxbrish",
+      "role": "user",
+      "content": "Test message 129",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhk6u4w13zam",
+      "role": "assistant",
+      "content": "Response 129",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhewua8nucbl",
+      "role": "user",
+      "content": "Test message 130",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwh8pyx3z41foc",
+      "role": "assistant",
+      "content": "Response 130",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhgjfg6js6vn6",
+      "role": "user",
+      "content": "Test message 131",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhagta77qwobi",
+      "role": "assistant",
+      "content": "Response 131",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwh92kz9w8s6bi",
+      "role": "user",
+      "content": "Test message 132",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhpuge7y9cmy9",
+      "role": "assistant",
+      "content": "Response 132",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhakkg8fq3z7t",
+      "role": "user",
+      "content": "Test message 133",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwh0kgip6xf4jsb",
+      "role": "assistant",
+      "content": "Response 133",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwh6k0mo42w8qv",
+      "role": "user",
+      "content": "Test message 134",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhv0i37rhzbq",
+      "role": "assistant",
+      "content": "Response 134",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhft6bok4gkd",
+      "role": "user",
+      "content": "Test message 135",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwh7p2fpux9pen",
+      "role": "assistant",
+      "content": "Response 135",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhz16rv496abi",
+      "role": "user",
+      "content": "Test message 136",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwh42py143xru7",
+      "role": "assistant",
+      "content": "Response 136",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhu9eeuhvlty",
+      "role": "user",
+      "content": "Test message 137",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhiite5sxnnim",
+      "role": "assistant",
+      "content": "Response 137",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhl1mu7fs9sto",
+      "role": "user",
+      "content": "Test message 138",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhj0bk06c7vp",
+      "role": "assistant",
+      "content": "Response 138",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhogc4d22m4z",
+      "role": "user",
+      "content": "Test message 139",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhhchghoh4fp",
+      "role": "assistant",
+      "content": "Response 139",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhu6yhmy6k1vl",
+      "role": "user",
+      "content": "Test message 140",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwh4mcj2di774m",
+      "role": "assistant",
+      "content": "Response 140",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwh9x2bvbb1rw",
+      "role": "user",
+      "content": "Test message 141",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhkaji1ne74iq",
+      "role": "assistant",
+      "content": "Response 141",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhzndis3chwe",
+      "role": "user",
+      "content": "Test message 142",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhzva5th0zhx",
+      "role": "assistant",
+      "content": "Response 142",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhk1wjxqucq9p",
+      "role": "user",
+      "content": "Test message 143",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwh0uel4y8p9g7",
+      "role": "assistant",
+      "content": "Response 143",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhxwg6gkv2ue",
+      "role": "user",
+      "content": "Test message 144",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhqgcoqm0i7l",
+      "role": "assistant",
+      "content": "Response 144",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhw4nknb9jegq",
+      "role": "user",
+      "content": "Test message 145",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhlttc00lj5bb",
+      "role": "assistant",
+      "content": "Response 145",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhhgn8pmimyzr",
+      "role": "user",
+      "content": "Test message 146",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhffbf8bvwkdt",
+      "role": "assistant",
+      "content": "Response 146",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhoyydjwmeu8e",
+      "role": "user",
+      "content": "Test message 147",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwh15luzfhmusz",
+      "role": "assistant",
+      "content": "Response 147",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhrqu94pom14l",
+      "role": "user",
+      "content": "Test message 148",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwh7bzk2mt5i2f",
+      "role": "assistant",
+      "content": "Response 148",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhsniiu8jan3c",
+      "role": "user",
+      "content": "Test message 149",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhnmcm90ek21",
+      "role": "assistant",
+      "content": "Response 149",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhjd8bxx7ce7g",
+      "role": "user",
+      "content": "Test message 150",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwhqjssu1jxs4a",
+      "role": "assistant",
+      "content": "Response 150",
+      "timestamp": 1773893566529,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "createdAt": 1773893564522,
+    "lastAccessedAt": 1773893566529,
+    "messageCount": 304,
+    "clientInfo": {
+      "userId": "user123",
+      "platform": "web",
+      "ip": "192.168.1.1"
+    }
+  }
+}

@@ -1,0 +1,85 @@
+entrypoint = "index.js"
+modules = ["nodejs-22", "python-3.11"]
+hidden = [".config", "package-lock.json"]
+
+[gitHubImport]
+requiredFiles = [".replit", "replit.nix", "package.json", "package-lock.json"]
+
+[nix]
+channel = "stable-24_11"
+packages = ["busybox-sandbox-shell", "fish", "go", "h", "haskellPackages.snap-templates", "python311Packages.open-interpreter", "python311Packages.pipx", "rustup", "sish", "tmux", "tre-command", "tree", "visidata", "zsh"]
+
+[deployment]
+run = ["node", "index.js"]
+deploymentTarget = "autoscale"
+ignorePorts = false
+
+[agent]
+expertMode = true
+
+[[ports]]
+localPort = 3000
+externalPort = 5000
+
+[[ports]]
+localPort = 3001
+externalPort = 6000
+
+[[ports]]
+localPort = 3002
+externalPort = 6800
+
+[[ports]]
+localPort = 3003
+externalPort = 8000
+
+[[ports]]
+localPort = 3005
+externalPort = 8008
+
+[[ports]]
+localPort = 3006
+externalPort = 8081
+
+[[ports]]
+localPort = 3007
+externalPort = 8099
+
+[[ports]]
+localPort = 3008
+externalPort = 9000
+
+[[ports]]
+localPort = 3999
+externalPort = 5173
+
+[[ports]]
+localPort = 8080
+externalPort = 8080
+
+[[ports]]
+localPort = 18789
+externalPort = 3003
+
+[[ports]]
+localPort = 18791
+externalPort = 4200
+exposeLocalhost = true
+
+[[ports]]
+localPort = 18792
+externalPort = 3002
+exposeLocalhost = true
+
+[[ports]]
+localPort = 19001
+externalPort = 80
+
+[[ports]]
+localPort = 19003
+externalPort = 3000
+
+[[ports]]
+localPort = 19004
+externalPort = 3001
+exposeLocalhost = true

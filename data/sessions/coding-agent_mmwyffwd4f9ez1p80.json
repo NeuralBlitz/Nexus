@@ -1,0 +1,28 @@
+{
+  "sessionId": "mmwyffwd4f9ez1p80",
+  "agentId": "coding-agent",
+  "messages": [
+    {
+      "id": "mmwyffwd07quilbfrfe",
+      "role": "user",
+      "content": "Debug this Python code",
+      "timestamp": 1773893566525,
+      "metadata": {}
+    },
+    {
+      "id": "mmwyffwdmwq52m1pl7t",
+      "role": "assistant",
+      "content": "I found a syntax error on line 5.",
+      "timestamp": 1773893566525,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "createdAt": 1773893566525,
+    "lastAccessedAt": 1773893566525,
+    "messageCount": 2,
+    "clientInfo": {
+      "ide": "vscode"
+    }
+  }
+}

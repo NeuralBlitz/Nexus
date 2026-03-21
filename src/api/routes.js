@@ -437,4 +437,313 @@ router.get('/orchestrator/templates', async (req, res) => {
   }
 });
 
+// ═══════════════════════════════════════════════════════════════════════════
+// KNOWLEDGE GRAPH ROUTES
+// ═══════════════════════════════════════════════════════════════════════════
+
+router.get('/knowledge/stats', async (req, res) => {
+  try {
+    const { getKnowledgeGraph } = await import('../knowledge/knowledge-graph.js');
+    const kg = getKnowledgeGraph();
+    const stats = kg.getDetailedStats();
+    res.json({ success: true, stats });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.post('/knowledge/nodes', async (req, res) => {
+  try {
+    const { getKnowledgeGraph } = await import('../knowledge/knowledge-graph.js');
+    const kg = getKnowledgeGraph();
+    const node = kg.addNode(req.body);
+    res.json({ success: true, node: node.toJSON() });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.get('/knowledge/nodes/:type', async (req, res) => {
+  try {
+    const { getKnowledgeGraph } = await import('../knowledge/knowledge-graph.js');
+    const kg = getKnowledgeGraph();
+    const nodes = kg.getNodesByType(req.params.type);
+    res.json({ success: true, count: nodes.length, nodes: nodes.map(n => n.toJSON()) });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.post('/knowledge/search', async (req, res) => {
+  try {
+    const { getKnowledgeGraph } = await import('../knowledge/knowledge-graph.js');
+    const kg = getKnowledgeGraph();
+    const results = kg.search(req.body.query, req.body);
+    res.json({ success: true, count: results.length, results });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.post('/knowledge/path', async (req, res) => {
+  try {
+    const { getKnowledgeGraph } = await import('../knowledge/knowledge-graph.js');
+    const kg = getKnowledgeGraph();
+    const path = kg.findPath(req.body.from, req.body.to);
+    res.json({ success: true, path, found: path.length > 0 });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// CACHE ROUTES
+// ═══════════════════════════════════════════════════════════════════════════
+
+router.get('/cache/stats', async (req, res) => {
+  try {
+    const { getCacheManager } = await import('../cache/cache-system.js');
+    const cm = getCacheManager();
+    const cache = cm.getCache(req.query.name || 'default');
+    const stats = cache.getStats();
+    res.json({ success: true, stats });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.post('/cache/get', async (req, res) => {
+  try {
+    const { getCacheManager } = await import('../cache/cache-system.js');
+    const cm = getCacheManager();
+    const cache = cm.getCache(req.body.cache || 'default');
+    const value = await cache.get(req.body.key);
+    res.json({ success: true, key: req.body.key, found: value !== null, value });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.post('/cache/set', async (req, res) => {
+  try {
+    const { getCacheManager } = await import('../cache/cache-system.js');
+    const cm = getCacheManager();
+    const cache = cm.getCache(req.body.cache || 'default');
+    await cache.set(req.body.key, req.body.value, { ttl: req.body.ttl });
+    res.json({ success: true, key: req.body.key });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.delete('/cache/invalidate/:pattern', async (req, res) => {
+  try {
+    const { getCacheManager } = await import('../cache/cache-system.js');
+    const cm = getCacheManager();
+    const cache = cm.getCache(req.query.cache || 'default');
+    const count = cache.invalidatePattern(req.params.pattern);
+    res.json({ success: true, invalidated: count });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// EVENTS ROUTES
+// ═══════════════════════════════════════════════════════════════════════════
+
+router.get('/events/channels', async (req, res) => {
+  try {
+    const { getEventBus } = await import('../events/event-bus.js');
+    const bus = getEventBus();
+    const channels = bus.getChannels();
+    const stats = bus.getChannelStats();
+    res.json({ success: true, channels, stats });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.post('/events/publish', async (req, res) => {
+  try {
+    const { getEventBus, Event } = await import('../events/event-bus.js');
+    const bus = getEventBus();
+    const event = new Event(req.body.type, req.body.payload, req.body.options);
+    await bus.publish(event);
+    res.json({ success: true, eventId: event.id });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SECURITY ROUTES
+// ═══════════════════════════════════════════════════════════════════════════
+
+router.get('/security/stats', async (req, res) => {
+  try {
+    const { getSecurityManager } = await import('../security/security-system.js');
+    const sec = getSecurityManager();
+    res.json({ success: true, stats: sec.getStats() });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.get('/security/audit', async (req, res) => {
+  try {
+    const { getSecurityManager } = await import('../security/security-system.js');
+    const sec = getSecurityManager();
+    const entries = sec.queryAuditLog(req.query);
+    res.json({ success: true, count: entries.length, entries });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.post('/security/apikeys', async (req, res) => {
+  try {
+    const { getSecurityManager } = await import('../security/security-system.js');
+    const sec = getSecurityManager();
+    const key = sec.createApiKey(req.body);
+    res.json({ success: true, key: key.toJSON() });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// WORKFLOW ROUTES
+// ═══════════════════════════════════════════════════════════════════════════
+
+router.get('/workflows', async (req, res) => {
+  try {
+    const { getWorkflowManager, WorkflowTemplates } = await import('../workflow/workflow-engine.js');
+    const wm = getWorkflowManager();
+    const workflows = wm.getAllWorkflows();
+    const templates = Object.keys(WorkflowTemplates);
+    res.json({ success: true, workflows: workflows.map(w => w.toJSON()), templates });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.post('/workflows', async (req, res) => {
+  try {
+    const { getWorkflowManager } = await import('../workflow/workflow-engine.js');
+    const wm = getWorkflowManager();
+    const wf = wm.createWorkflow(req.body);
+    res.json({ success: true, workflow: wf.toJSON() });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.post('/workflows/:id/execute', async (req, res) => {
+  try {
+    const { getWorkflowManager } = await import('../workflow/workflow-engine.js');
+    const wm = getWorkflowManager();
+    const wf = wm.getWorkflow(req.params.id);
+    if (!wf) return res.status(404).json({ success: false, error: 'Workflow not found' });
+    const execution = await wf.execute(req.body.context || {});
+    res.json({ success: true, execution: execution.toJSON() });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// QUEUE ROUTES
+// ═══════════════════════════════════════════════════════════════════════════
+
+router.get('/queue/stats', async (req, res) => {
+  try {
+    const { getQueueManager } = await import('../queue/task-queue.js');
+    const qm = getQueueManager();
+    res.json({ success: true, stats: qm.getCombinedStats(), queues: qm.getQueueNames() });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.post('/queue/add', async (req, res) => {
+  try {
+    const { getQueueManager } = await import('../queue/task-queue.js');
+    const qm = getQueueManager();
+    const queue = qm.getQueue(req.body.queue) || qm.createQueue(req.body.queue);
+    const job = await queue.add(req.body.data, req.body.options);
+    res.json({ success: true, jobId: job.id });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// RESILIENCE ROUTES
+// ═══════════════════════════════════════════════════════════════════════════
+
+router.get('/resilience/status', async (req, res) => {
+  try {
+    const { getResilienceManager } = await import('../resilience/resilience-system.js');
+    const rm = getResilienceManager();
+    res.json({ success: true, status: rm.getAllStatus(), health: rm.getHealth() });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// TEXT ANALYSIS ROUTES
+// ═══════════════════════════════════════════════════════════════════════════
+
+router.post('/analyze/sentiment', async (req, res) => {
+  try {
+    const { TextAnalyzer } = await import('../multimodal/multimodal-system.js');
+    const result = TextAnalyzer.sentiment(req.body.text);
+    res.json({ success: true, result });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.post('/analyze/keywords', async (req, res) => {
+  try {
+    const { TextAnalyzer } = await import('../multimodal/multimodal-system.js');
+    const result = TextAnalyzer.extractKeywords(req.body.text, req.body.limit);
+    res.json({ success: true, result });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.post('/analyze/entities', async (req, res) => {
+  try {
+    const { TextAnalyzer } = await import('../multimodal/multimodal-system.js');
+    const result = TextAnalyzer.extractEntities(req.body.text);
+    res.json({ success: true, result });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.post('/analyze/language', async (req, res) => {
+  try {
+    const { TextAnalyzer } = await import('../multimodal/multimodal-system.js');
+    const result = TextAnalyzer.detectLanguage(req.body.text);
+    res.json({ success: true, result });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.post('/analyze/statistics', async (req, res) => {
+  try {
+    const { TextAnalyzer } = await import('../multimodal/multimodal-system.js');
+    const result = TextAnalyzer.statistics(req.body.text);
+    res.json({ success: true, result });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 export default router;

@@ -820,6 +820,116 @@ export function getMultiModalProcessor(options) {
   return processor;
 }
 
+/**
+ * Text Analysis utilities (sentiment, keywords, summary)
+ */
+export class TextAnalyzer {
+  /**
+   * Simple sentiment analysis (word-list based)
+   */
+  static sentiment(text) {
+    const positive = ['good', 'great', 'excellent', 'amazing', 'wonderful', 'fantastic', 'love', 'happy', 'best', 'perfect', 'beautiful', 'awesome', 'brilliant', 'outstanding', 'superb'];
+    const negative = ['bad', 'terrible', 'awful', 'horrible', 'worst', 'hate', 'sad', 'angry', 'poor', 'ugly', 'disappointing', 'failure', 'broken', 'useless', 'dreadful'];
+
+    const words = text.toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/);
+    let score = 0;
+    const found = { positive: [], negative: [] };
+
+    for (const word of words) {
+      if (positive.includes(word)) { score++; found.positive.push(word); }
+      if (negative.includes(word)) { score--; found.negative.push(word); }
+    }
+
+    const total = found.positive.length + found.negative.length;
+    return {
+      score,
+      normalized: total > 0 ? (score / total).toFixed(2) : 0,
+      label: score > 0 ? 'positive' : score < 0 ? 'negative' : 'neutral',
+      confidence: total > 0 ? Math.min(1, total / words.length * 5).toFixed(2) : 0,
+      words: found
+    };
+  }
+
+  /**
+   * Extract keywords (simple TF-based)
+   */
+  static extractKeywords(text, limit = 10) {
+    const stopWords = new Set(['the', 'a', 'an', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'shall', 'can', 'need', 'dare', 'ought', 'used', 'to', 'of', 'in', 'for', 'on', 'with', 'at', 'by', 'from', 'as', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'between', 'under', 'again', 'further', 'then', 'once', 'and', 'but', 'or', 'nor', 'not', 'so', 'yet', 'both', 'either', 'neither', 'each', 'every', 'all', 'any', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'only', 'own', 'same', 'than', 'too', 'very', 'just', 'because', 'this', 'that', 'these', 'those', 'i', 'me', 'my', 'we', 'our', 'you', 'your', 'he', 'him', 'his', 'she', 'her', 'it', 'its', 'they', 'them', 'their', 'what', 'which', 'who', 'whom', 'when', 'where', 'why', 'how']);
+
+    const words = text.toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/).filter(w => w.length > 2 && !stopWords.has(w));
+    const freq = {};
+    for (const w of words) freq[w] = (freq[w] || 0) + 1;
+
+    return Object.entries(freq)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, limit)
+      .map(([word, count]) => ({ word, count, frequency: (count / words.length).toFixed(4) }));
+  }
+
+  /**
+   * Count words, sentences, paragraphs
+   */
+  static statistics(text) {
+    const words = text.trim().split(/\s+/).filter(w => w.length > 0);
+    const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+    const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim().length > 0);
+    const chars = text.length;
+    const charsNoSpace = text.replace(/\s/g, '').length;
+
+    return {
+      words: words.length,
+      sentences: sentences.length,
+      paragraphs: paragraphs.length,
+      characters: chars,
+      charactersNoSpaces: charsNoSpace,
+      avgWordsPerSentence: sentences.length > 0 ? (words.length / sentences.length).toFixed(1) : 0,
+      avgSentencesPerParagraph: paragraphs.length > 0 ? (sentences.length / paragraphs.length).toFixed(1) : 0,
+      readingTime: `${Math.ceil(words.length / 200)} min`
+    };
+  }
+
+  /**
+   * Detect language (simple heuristic)
+   */
+  static detectLanguage(text) {
+    const sample = text.toLowerCase().substring(0, 500);
+    const patterns = {
+      english: /\b(the|and|is|are|was|were|have|has)\b/g,
+      spanish: /\b(el|la|de|en|que|es|los|las|del|una)\b/g,
+      french: /\b(le|la|de|et|est|les|des|une|que|dans)\b/g,
+      german: /\b(der|die|und|ist|das|ein|eine|von|zu|den)\b/g,
+      japanese: /[\u3040-\u309f\u30a0-\u30ff]/g,
+      chinese: /[\u4e00-\u9fff]/g,
+      korean: /[\uac00-\ud7af]/g,
+      arabic: /[\u0600-\u06ff]/g,
+      russian: /[\u0400-\u04ff]/g
+    };
+
+    const scores = {};
+    for (const [lang, regex] of Object.entries(patterns)) {
+      const matches = sample.match(regex);
+      scores[lang] = matches ? matches.length : 0;
+    }
+
+    const detected = Object.entries(scores).sort((a, b) => b[1] - a[1])[0];
+    return { language: detected[0], confidence: Math.min(1, detected[1] / 20).toFixed(2), scores };
+  }
+
+  /**
+   * Extract entities (emails, URLs, phone numbers, dates)
+   */
+  static extractEntities(text) {
+    return {
+      emails: (text.match(/[\w.-]+@[\w.-]+\.\w+/g) || []),
+      urls: (text.match(/https?:\/\/[^\s]+/g) || []),
+      phones: (text.match(/[\+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}/g) || []),
+      dates: (text.match(/\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}|\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2}/g) || []),
+      mentions: (text.match(/@\w+/g) || []),
+      hashtags: (text.match(/#\w+/g) || [])
+    };
+  }
+}
+
 export default {
   MultiModalProcessor,
   MediaAsset,
@@ -829,5 +939,6 @@ export default {
   MediaType,
   ImageFormat,
   AudioFormat,
+  TextAnalyzer,
   getMultiModalProcessor
 };

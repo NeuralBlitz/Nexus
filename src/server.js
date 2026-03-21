@@ -173,119 +173,6 @@ const state = {
   }
 };
 
-// Initialize agents with enhanced error handling
-const initializeAgents = async () => {
-  try {
-    // Initialize built-in agents
-    const AGENTS = [
-      { id: 'NEXUS-1', name: 'NEXUS', icon: '🔮', color: '#9333EA', role: 'Platform Core', model: 'auto' },
-      { id: 'CODEX', name: 'CODEX', icon: '💻', color: '#10B981', role: 'Code Architect', model: 'codellama' },
-      { id: 'AURORA', name: 'AURORA', icon: '🌟', color: '#F59E0B', role: 'Research Lead', model: 'llama3.2' },
-      { id: 'GHOST', name: 'GHOST', icon: '👻', color: '#06B6D4', role: 'System Ops', model: 'phi3' },
-      { id: 'ORACLE', name: 'ORACLE', icon: '🔮', color: '#EC4899', role: 'Analysis', model: 'deepseek-r1' },
-      { id: 'WRAITH', name: 'WRAITH', icon: '⚡', color: '#EF4444', role: 'Speed Runner', model: 'mistral' },
-      { id: 'DEBUG', name: 'DEBUG', icon: '🐛', color: '#F97316', role: 'Debugger', model: 'codellama' },
-      { id: 'SCRIBE', name: 'SCRIBE', icon: '📝', color: '#8B5CF6', role: 'Documentation', model: 'llama3.2' },
-      { id: 'TESTER', name: 'TESTER', icon: '🧪', color: '#14B8A6', role: 'Testing', model: 'codellama' },
-      { id: 'ARCHIVE', name: 'ARCHIVE', icon: '📦', color: '#64748B', role: 'Backup & Restore', model: 'phi3' },
-      { id: 'SENTINEL', name: 'SENTINEL', icon: '🛡️', color: '#DC2626', role: 'Security', model: 'deepseek-r1' }
-    ];
-
-    AGENTS.forEach(a => {
-      state.agents[a.id] = {
-        ...a,
-        status: 'STANDBY',
-        currentTask: null,
-        tasksCompleted: 0,
-        xp: 0,
-        level: 1,
-        lastActive: null
-      };
-    });
-
-    // Load additional agents
-    try {
-      const { additionalAgents } = await import('./src/agents/additional-agents.js');
-      additionalAgents.forEach(agent => {
-        state.agents[agent.id] = {
-          ...agent,
-          status: 'STANDBY',
-          currentTask: null,
-          tasksCompleted: 0,
-          xp: 0,
-          level: 1,
-          lastActive: null
-        };
-      });
-      console.log(`✅ Additional Agents: ${additionalAgents.length} agents loaded`);
-    } catch (error) {
-      console.warn('⚠️ Failed to load additional agents:', error.message);
-      // Don't fail initialization if additional agents fail to load
-    }
-    
-    console.log(`✅ Agent Registry: ${Object.keys(state.agents).length} agents initialized`);
-  } catch (error) {
-    console.error('❌ Failed to initialize agents:', error.message);
-    throw error;
-  }
-};
-
-// Initialize providers with enhanced error handling
-const initializeProviders = async () => {
-  try {
-    // Initialize built-in providers
-    const PROVIDERS = {
-      openai: new OpenAIProvider({ enabled: !!process.env.OPENAI_API_KEY, apiKey: process.env.OPENAI_API_KEY }),
-      anthropic: new AnthropicProvider({ enabled: !!process.env.ANTHROPIC_API_KEY, apiKey: process.env.ANTHROPIC_API_KEY }),
-      ollama: new OllamaProvider({ enabled: true, baseUrl: process.env.OLLAMA_HOST || 'http://localhost:11434' })
-    };
-
-    // Load additional providers
-    try {
-      const { GoogleAIProvider, MistralProvider, CohereProvider, AI21Provider, MetaProvider, HuggingFaceProvider, ReplicateProvider, PerplexityProvider, GroqProvider, DeepSeekProvider, FireworksProvider, TogetherProvider, AnyscaleProvider, CloudflareProvider, StabilityAIProvider } = await import('./src/providers/additional-providers.js');
-      const extraProviders = [
-        new GoogleAIProvider({ id: 'google-ai', name: 'Google AI', apiKey: process.env.GOOGLE_AI_API_KEY || '' }),
-        new MistralProvider({ id: 'mistral', name: 'Mistral AI', apiKey: process.env.MISTRAL_API_KEY || '' }),
-        new CohereProvider({ id: 'cohere', name: 'Cohere', apiKey: process.env.COHERE_API_KEY || '' }),
-        new AI21Provider({ id: 'ai21', name: 'AI21 Jamba', apiKey: process.env.AI21_API_KEY || '' }),
-        new MetaProvider({ id: 'meta', name: 'Meta AI', apiKey: process.env.META_API_KEY || '' }),
-        new HuggingFaceProvider({ id: 'huggingface', name: 'Hugging Face', apiKey: process.env.HUGGINGFACE_API_KEY || '' }),
-        new ReplicateProvider({ id: 'replicate', name: 'Replicate', apiKey: process.env.REPLICATE_API_KEY || '' }),
-        new PerplexityProvider({ id: 'perplexity', name: 'Perplexity', apiKey: process.env.PERPLEXITY_API_KEY || '' }),
-        new GroqProvider({ id: 'groq', name: 'Groq', apiKey: process.env.GROQ_API_KEY || '' }),
-        new DeepSeekProvider({ id: 'deepseek', name: 'DeepSeek', apiKey: process.env.DEEPSEEK_API_KEY || '' }),
-        new FireworksProvider({ id: 'fireworks', name: 'Fireworks AI', apiKey: process.env.FIREWORKS_API_KEY || '' }),
-        new TogetherProvider({ id: 'together', name: 'Together AI', apiKey: process.env.TOGETHER_API_KEY || '' }),
-        new AnyscaleProvider({ id: 'anyscale', name: 'Anyscale', apiKey: process.env.ANYSCALE_API_KEY || '' }),
-        new CloudflareProvider({ id: 'cloudflare', name: 'Cloudflare Workers AI', apiKey: process.env.CLOUDFLARE_API_KEY || '', accountId: process.env.CLOUDFLARE_ACCOUNT_ID || '' }),
-        new StabilityAIProvider({ id: 'stability', name: 'Stability AI', apiKey: process.env.STABILITY_API_KEY || '' })
-      ];
-      
-      extraProviders.forEach(provider => {
-        if (provider.apiKey) { // Only enable if API key is provided
-          PROVIDERS[provider.id] = provider;
-          console.log(`✅ Provider loaded: ${provider.name}`);
-        }
-      });
-    } catch (error) {
-      console.warn('⚠️ Failed to load additional providers:', error.message);
-      // Don't fail initialization if additional providers fail to load
-    }
-    
-    // Initialize provider manager
-    const providerManager = getProviderManager();
-    Object.values(PROVIDERS).forEach(provider => {
-      providerManager.register(provider);
-    });
-    
-    console.log(`✅ Provider Manager: ${providerManager.getAll().length} providers registered`);
-    return providerManager;
-  } catch (error) {
-    console.error('❌ Failed to initialize providers:', error.message);
-    throw error;
-  }
-};
-
 // ═══════════════════════════════════════════════════════════════════════════
 // AI PROVIDERS (Legacy compatibility - uses new Provider System)
 // ═══════════════════════════════════════════════════════════════════════════
@@ -687,7 +574,7 @@ const PROVIDERS = {
 
 // Load additional providers
 try {
-  const { GoogleAIProvider, MistralProvider, CohereProvider, AI21Provider, MetaProvider, HuggingFaceProvider, ReplicateProvider, PerplexityProvider, GroqProvider, DeepSeekProvider, FireworksProvider, TogetherProvider, AnyscaleProvider, CloudflareProvider, StabilityAIProvider } = await import('./src/providers/additional-providers.js');
+  const { GoogleAIProvider, MistralProvider, CohereProvider, AI21Provider, MetaProvider, HuggingFaceProvider, ReplicateProvider, PerplexityProvider, GroqProvider, DeepSeekProvider, FireworksProvider, TogetherProvider, AnyscaleProvider, CloudflareProvider, StabilityAIProvider } = await import('./providers/additional-providers.js');
   const extraProviders = [
     new GoogleAIProvider({ id: 'google-ai', name: 'Google AI', apiKey: process.env.GOOGLE_AI_API_KEY || '' }),
     new MistralProvider({ id: 'mistral', name: 'Mistral AI', apiKey: process.env.MISTRAL_API_KEY || '' }),
@@ -705,9 +592,9 @@ try {
     new CloudflareProvider({ id: 'cloudflare', name: 'Cloudflare Workers AI', apiKey: process.env.CLOUDFLARE_API_KEY || '', accountId: process.env.CLOUDFLARE_ACCOUNT_ID || '' }),
     new StabilityAIProvider({ id: 'stability', name: 'Stability AI', apiKey: process.env.STABILITY_API_KEY || '' })
   ];
-  
+
   extraProviders.forEach(provider => {
-    if (provider.apiKey) { // Only enable if API key is provided
+    if (provider.apiKey) {
       PROVIDERS[provider.id] = provider;
       console.log(`✅ Provider loaded: ${provider.name}`);
     }
@@ -716,12 +603,75 @@ try {
   console.warn('⚠️ Failed to load additional providers:', error.message);
 }
 
-// Initialize provider manager
-const providerManager = getProviderManager();
+// Register providers with provider manager
 Object.values(PROVIDERS).forEach(provider => {
   providerManager.register(provider);
 });
 
+// ═══════════════════════════════════════════════════════════════════════════
+// ADVANCED SYSTEMS - Memory, Events, Queue, Security, Sandbox, Knowledge
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Initialize Advanced Systems
+const memory = getMemoryManager();
+const pluginManager = getPluginManager({ pluginDirs: ['./src/plugins/community'] });
+await pluginManager.initialize();
+const eventBus = getEventBus();
+const queueManager = getQueueManager();
+const security = getSecurityManager();
+const codeSandbox = getCodeSandbox();
+const knowledgeGraph = getKnowledgeGraph();
+
+// Initialize Advanced Integrations
+const rateLimiter = new RateLimiter();
+const webhookVerifier = new WebhookVerifier();
+const agentCommunicator = new AgentCommunicator();
+const redisCache = new RedisCache();
+
+// Initialize Middleware
+const wsAuth = new WebSocketAuth();
+const corsMiddleware = new CorsMiddleware();
+const requestLogger = new RequestLogger();
+const compressionMiddleware = new CompressionMiddleware();
+const healthChecker = new HealthChecker();
+const apiKeyManager = new APIKeyManager();
+// Simple security middleware using SecurityManager
+const securityMiddleware = (req, res, next) => {
+  const auth = security.authenticate(req);
+  req.security = security;
+  req.auth = auth;
+  next();
+};
+
+// Initialize Webhook Providers (constructor registers GitLab, Bitbucket, N8N, Zapier defaults)
+const webhookProviderManager = new WebhookProviderManager();
+
+// Initialize File Upload
+const fileUploadHandler = new FileUploadHandler();
+
+// Initialize Channels (only if tokens provided)
+const discordChannel = process.env.DISCORD_TOKEN
+  ? new DiscordChannel({ token: process.env.DISCORD_TOKEN, clientId: process.env.DISCORD_CLIENT_ID, guildId: process.env.DISCORD_GUILD_ID })
+  : null;
+const telegramChannel = process.env.TELEGRAM_TOKEN
+  ? new TelegramChannel({ token: process.env.TELEGRAM_TOKEN })
+  : null;
+
+// Register channels with ChannelManager
+try {
+  if (discordChannel) {
+    await channelManager.register(discordChannel);
+    console.log('✅ Discord channel registered');
+  }
+  if (telegramChannel) {
+    await channelManager.register(telegramChannel);
+    console.log('✅ Telegram channel registered');
+  }
+} catch (error) {
+  console.warn('⚠️ Channel registration error:', error.message);
+}
+
+// Apply middleware
 app.use(securityMiddleware);
 
 // Event bus middleware for request tracking

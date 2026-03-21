@@ -1401,7 +1401,7 @@ export class CloudinaryIntegration extends BaseIntegration {
   }
 
   async deleteFolder(path) {
-    return this.request('/folders/${path}', { method: 'DELETE' });
+    return this.request(`/folders/${path}`, { method: 'DELETE' });
   }
 
   // Tags

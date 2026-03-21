@@ -19,6 +19,17 @@ export { getLockManager, DistributedLockManager, Semaphore, LeaderElection } fro
 export { getMemoryCache, getTieredCache, MemoryCache, TieredCache } from './caching.js';
 export { getABTestManager, ABTestManager, getFeatureManager, FeatureManager } from './ab-testing.js';
 export { getGraphQLSchema, GraphQLSchema } from './graphql-support.js';
+export {
+  RateLimiterV2,
+  RetryHandler,
+  Memoizer,
+  DataPipeline,
+  FeatureFlagManagerV2,
+  getRateLimiterV2,
+  getRetryHandler,
+  getMemoizer,
+  getFeatureFlagManagerV2
+} from './new-features.js';
 
 export const features = [
   'rate-limiter',
@@ -41,7 +52,12 @@ export const features = [
   'distributed-locks',
   'caching',
   'ab-testing',
-  'graphql-support'
+  'graphql-support',
+  'rate-limiter-v2',
+  'retry-handler',
+  'memoizer',
+  'data-pipeline',
+  'feature-flags-v2'
 ];
 
 export const featureCount = features.length;

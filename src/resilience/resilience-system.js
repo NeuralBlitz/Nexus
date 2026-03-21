@@ -632,11 +632,68 @@ export class ResilienceManager extends EventEmitter {
   }
 
   /**
-   * Reset all
+   * Reset all resilience patterns
    */
   resetAll() {
     for (const cb of this.circuitBreakers.values()) cb.reset();
     for (const rl of this.rateLimiters.values()) rl.resetAll();
+    for (const bh of this.bulkheads.values()) bh.reset();
+    this.emit('resilience:reset');
+  }
+
+  /**
+   * Execute with fallback
+   */
+  async executeWithFallback(name, fn, fallbackFn, options = {}) {
+    try {
+      return await this.execute(name, fn, options);
+    } catch (error) {
+      this.emit('resilience:fallback', { name, error: error.message });
+      return fallbackFn(error);
+    }
+  }
+
+  /**
+   * Execute with timeout
+   */
+  async executeWithTimeout(name, fn, timeoutMs, options = {}) {
+    return this.execute(name, async () => {
+      return Promise.race([
+        fn(),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error(`Timeout after ${timeoutMs}ms`)), timeoutMs)
+        )
+      ]);
+    }, options);
+  }
+
+  /**
+   * Execute across multiple backends with first-success
+   */
+  async executeRace(name, fns, options = {}) {
+    const results = await Promise.allSettled(
+      fns.map((fn, i) => this.execute(`${name}:${i}`, fn, options))
+    );
+
+    const success = results.find(r => r.status === 'fulfilled');
+    if (success) return success.value;
+
+    throw new Error('All backends failed: ' + results.map(r => r.reason?.message).join('; '));
+  }
+
+  /**
+   * Get resilience health
+   */
+  getHealth() {
+    const status = this.getAllStatus();
+    const tripped = Object.values(status.circuitBreakers).filter(cb => cb.state === 'OPEN').length;
+    return {
+      healthy: tripped === 0,
+      openCircuits: tripped,
+      totalCircuits: Object.keys(status.circuitBreakers).length,
+      totalRateLimiters: Object.keys(status.rateLimiters).length,
+      totalBulkheads: Object.keys(status.bulkheads).length
+    };
   }
 }
 

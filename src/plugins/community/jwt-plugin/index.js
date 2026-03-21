@@ -9,6 +9,7 @@ export const manifest = {
 };
 
 let api;
+import crypto from 'crypto';
 
 export async function init(context) {
   api = context;
@@ -34,7 +35,6 @@ function base64UrlDecode(str) {
 }
 
 function createSignature(header, payload, secret, algorithm = 'HS256') {
-  const crypto = require('crypto');
   const alg = algorithm.toLowerCase();
   let key = secret;
   

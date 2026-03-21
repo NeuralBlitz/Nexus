@@ -1828,8 +1828,8 @@ await testModule('Additional Agents (20)', async () => {
     throw new Error('additionalAgents should be an array');
   }
   
-  if (additionalAgents.length !== 20) {
-    throw new Error(`Should have 20 agents, got ${additionalAgents.length}`);
+  if (additionalAgents.length !== 30) {
+    throw new Error(`Should have 30 agents, got ${additionalAgents.length}`);
   }
   
   const agentIds = additionalAgents.map(a => a.id);
@@ -2191,6 +2191,70 @@ await testModule('Task Queue Processing', async () => {
   console.log(`     - Jobs added: 10`);
   console.log(`     - Waiting jobs: ${stats.waiting}`);
   console.log(`     - Queue name: ${queue.name}`);
+});
+
+// Test 51: Model Registry (100+ models, 20 providers)
+await testModule('Model Registry (100+ models, 20 providers)', async () => {
+  const registryModule = await import('./src/providers/model-registry.js');
+  const ModelModule = registryModule.default || registryModule;
+  
+  const { 
+    ModelRegistry, 
+    ModelCapability, 
+    TaskCategory,
+    getAllModelProfiles, 
+    getModelsByProvider, 
+    getModelsByCapability, 
+    getModelsByCategory,
+    searchModels,
+    getRegisteredProviders,
+    getModelStats
+  } = ModelModule;
+  
+  const modelCount = Object.keys(ModelRegistry).length;
+  if (modelCount < 100) {
+    throw new Error(`Should have at least 100 models, got ${modelCount}`);
+  }
+  
+  const providers = getRegisteredProviders();
+  if (providers.length < 20) {
+    throw new Error(`Should have at least 20 providers, got ${providers.length}`);
+  }
+  
+  const stats = getModelStats();
+  if (stats.total !== modelCount) {
+    throw new Error('Stats total should match model count');
+  }
+  
+  // Test model retrieval by provider
+  const openaiModels = getModelsByProvider('openai');
+  if (openaiModels.length < 10) {
+    throw new Error(`OpenAI should have at least 10 models, got ${openaiModels.length}`);
+  }
+  
+  // Test model retrieval by capability
+  const codeModels = getModelsByCapability(ModelCapability.CODE);
+  if (codeModels.length < 20) {
+    throw new Error(`Should have at least 20 code-capable models, got ${codeModels.length}`);
+  }
+  
+  // Test model search
+  const gptModels = searchModels('gpt');
+  if (gptModels.length < 5) {
+    throw new Error(`Should find at least 5 GPT models, got ${gptModels.length}`);
+  }
+  
+  // Test model profiles
+  const profiles = getAllModelProfiles();
+  if (profiles.length !== modelCount) {
+    throw new Error('Profiles count should match model count');
+  }
+  
+  console.log(`     - Total models: ${modelCount}`);
+  console.log(`     - Providers: ${providers.length}`);
+  console.log(`     - Code-capable models: ${codeModels.length}`);
+  console.log(`     - Sample models: ${Object.keys(ModelRegistry).slice(0, 5).join(', ')}`);
+  console.log(`     - Sample providers: ${providers.slice(0, 5).join(', ')}`);
 });
   const {
     RobinhoodIntegration,

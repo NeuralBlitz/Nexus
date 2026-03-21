@@ -229,6 +229,7 @@ export class BitbucketWebhookProvider extends WebhookProvider {
    */
   verifySignature(payload, signature) {
     if (!this.secret) return true;
+    if (!signature) return false;
 
     const payloadStr = typeof payload === 'string' ? payload : JSON.stringify(payload);
     const expectedSig = 'sha256=' + crypto
@@ -236,10 +237,14 @@ export class BitbucketWebhookProvider extends WebhookProvider {
       .update(payloadStr)
       .digest('hex');
 
-    return crypto.timingSafeEqual(
-      Buffer.from(signature || ''),
-      Buffer.from(expectedSig)
-    );
+    try {
+      return crypto.timingSafeEqual(
+        Buffer.from(signature),
+        Buffer.from(expectedSig)
+      );
+    } catch {
+      return false;
+    }
   }
 
   /**

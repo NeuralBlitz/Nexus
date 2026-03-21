@@ -340,6 +340,87 @@ export class MemoryCacheStore {
 
     return results;
   }
+
+  /**
+   * Batch get multiple keys
+   */
+  mget(keys) {
+    const results = {};
+    for (const key of keys) {
+      const value = this.get(key);
+      if (value !== null) results[key] = value;
+    }
+    return results;
+  }
+
+  /**
+   * Batch set multiple key-value pairs
+   */
+  mset(entries, options = {}) {
+    for (const { key, value, ttl } of entries) {
+      this.set(key, value, { ttl: ttl || options.ttl });
+    }
+  }
+
+  /**
+   * Check if key exists and is not expired
+   */
+  has(key) {
+    const entry = this.entries.get(key);
+    if (!entry) return false;
+    if (entry.isExpired()) { this.delete(key); return false; }
+    return true;
+  }
+
+  /**
+   * Get all keys (optionally filtered by pattern)
+   */
+  keys(pattern = null) {
+    const allKeys = [];
+    for (const [key, entry] of this.entries) {
+      if (!entry.isExpired()) {
+        if (!pattern || key.includes(pattern)) allKeys.push(key);
+      }
+    }
+    return allKeys;
+  }
+
+  /**
+   * Invalidate all entries matching a pattern
+   */
+  invalidatePattern(pattern) {
+    let count = 0;
+    const regex = new RegExp(pattern.replace(/\*/g, '.*'));
+    for (const key of this.entries.keys()) {
+      if (regex.test(key)) { this.delete(key); count++; }
+    }
+    return count;
+  }
+
+  /**
+   * Get cache size in items and bytes
+   */
+  size() {
+    return { items: this.entries.size, bytes: this.currentSize };
+  }
+
+  /**
+   * Get top N most accessed entries
+   */
+  topEntries(n = 10) {
+    return Array.from(this.entries.entries())
+      .filter(([, e]) => !e.isExpired())
+      .sort((a, b) => b[1].frequency - a[1].frequency)
+      .slice(0, n)
+      .map(([key, entry]) => ({ key, hits: entry.frequency, lastAccessed: entry.lastAccessed }));
+  }
+
+  /**
+   * Reset all stats
+   */
+  resetStats() {
+    this.stats = { hits: 0, misses: 0, evictions: 0, sets: 0, deletes: 0 };
+  }
 }
 
 /**
@@ -504,6 +585,81 @@ export class TieredCache extends EventEmitter {
       await this.l2.delete(key);
     }
     return true;
+  }
+
+  /**
+   * Batch get multiple keys
+   */
+  async mget(keys) {
+    const results = {};
+    const l2Misses = [];
+
+    // Try L1 first
+    for (const key of keys) {
+      const value = this.l1.get(key);
+      if (value !== null) {
+        results[key] = value;
+        this.stats.l1Hits++;
+      } else {
+        l2Misses.push(key);
+      }
+    }
+
+    // Try L2 for misses
+    if (this.l2 && l2Misses.length > 0) {
+      for (const key of l2Misses) {
+        const value = await this.l2.get(key);
+        if (value !== null) {
+          results[key] = value;
+          this.l1.set(key, value);
+          this.stats.l2Hits++;
+        } else {
+          this.stats.misses++;
+        }
+      }
+    } else {
+      this.stats.misses += l2Misses.length;
+    }
+
+    return results;
+  }
+
+  /**
+   * Batch set multiple entries
+   */
+  async mset(entries, options = {}) {
+    for (const { key, value, ttl } of entries) {
+      await this.set(key, value, { ttl: ttl || options.ttl });
+    }
+  }
+
+  /**
+   * Check if key exists
+   */
+  async has(key) {
+    if (this.l1.has(key)) return true;
+    if (this.l2) {
+      const value = await this.l2.get(key);
+      if (value !== null) {
+        this.l1.set(key, value);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Invalidate all entries matching a pattern
+   */
+  invalidatePattern(pattern) {
+    return this.l1.invalidatePattern(pattern);
+  }
+
+  /**
+   * Get all keys from L1
+   */
+  keys(pattern = null) {
+    return this.l1.keys(pattern);
   }
 
   /**

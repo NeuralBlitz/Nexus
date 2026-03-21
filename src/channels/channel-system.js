@@ -30,7 +30,21 @@ export const MessageType = {
   TASK: 'task',
   RESULT: 'result',
   ERROR: 'error',
-  NOTIFICATION: 'notification'
+  NOTIFICATION: 'notification',
+  FILE: 'file',
+  IMAGE: 'image',
+  AUDIO: 'audio',
+  VIDEO: 'video',
+  LOCATION: 'location',
+  CONTACT: 'contact',
+  STICKER: 'sticker',
+  REACTION: 'reaction',
+  THREAD: 'thread',
+  TYPING: 'typing',
+  PRESENCE: 'presence',
+  ACK: 'ack',
+  PING: 'ping',
+  PONG: 'pong'
 };
 
 /**
@@ -1481,6 +1495,56 @@ export class ChannelManager extends EventEmitter {
 
     await Promise.allSettled(promises);
     this.emit('all:stopped');
+  }
+
+  /**
+   * Broadcast to channels of a specific type
+   */
+  async broadcastToType(type, message, options = {}) {
+    const targets = this.getAll().filter(c => c.type === type && c.state === ChannelState.ACTIVE);
+    const results = await Promise.allSettled(
+      targets.map(c => c.send(options.target || 'default', message))
+    );
+    return { sent: results.filter(r => r.status === 'fulfilled').length, total: targets.length };
+  }
+
+  /**
+   * Send to a specific channel by ID
+   */
+  async sendTo(channelId, target, message) {
+    const channel = this.channels.get(channelId);
+    if (!channel) throw new Error(`Channel not found: ${channelId}`);
+    return channel.send(target, message);
+  }
+
+  /**
+   * Get channels by type
+   */
+  getByType(type) {
+    return this.getAll().filter(c => c.type === type);
+  }
+
+  /**
+   * Enable/disable a channel
+   */
+  setEnabled(channelId, enabled) {
+    const channel = this.channels.get(channelId);
+    if (channel) channel.enabled = enabled;
+    return this;
+  }
+
+  /**
+   * Remove a route
+   */
+  removeRoute(pattern) {
+    this.routes.delete(pattern);
+  }
+
+  /**
+   * Get all route patterns
+   */
+  getRoutes() {
+    return Object.fromEntries(this.routes.entries());
   }
 }
 

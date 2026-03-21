@@ -202,6 +202,106 @@ export const additionalAgents = [
     model: 'codellama',
     description: 'Manage infrastructure and deployments',
     tools: ['bash', 'file', 'code']
+  }),
+  new Agent({
+    id: 'QUANTUM',
+    name: 'QUANTUM',
+    icon: '⚛️',
+    color: '#7C3AED',
+    role: 'Quantum Computing Specialist',
+    model: 'deepseek-coder',
+    description: 'Design quantum algorithms and simulations',
+    tools: ['code', 'bash', 'file']
+  }),
+  new Agent({
+    id: 'NEURAL',
+    name: 'NEURAL',
+    icon: '🧠',
+    color: '#EC4899',
+    role: 'ML Engineer',
+    model: 'codellama',
+    description: 'Build and train machine learning models',
+    tools: ['code', 'bash', 'file', 'data']
+  }),
+  new Agent({
+    id: 'FORENSIC',
+    name: 'FORENSIC',
+    icon: '🔍',
+    color: '#1F2937',
+    role: 'Digital Forensics Analyst',
+    model: 'deepseek-coder',
+    description: 'Analyze logs, traces, and security incidents',
+    tools: ['bash', 'file', 'code']
+  }),
+  new Agent({
+    id: 'ARCHITECT',
+    name: 'ARCHITECT',
+    icon: '🏗️',
+    color: '#059669',
+    role: 'System Architect',
+    model: 'codellama',
+    description: 'Design scalable system architectures',
+    tools: ['file', 'code', 'web']
+  }),
+  new Agent({
+    id: 'ACCESSIBILITY',
+    name: 'ACCESSIBILITY',
+    icon: '♿',
+    color: '#2563EB',
+    role: 'Accessibility Expert',
+    model: 'llama3.2',
+    description: 'Audit and improve accessibility compliance',
+    tools: ['file', 'web', 'search']
+  }),
+  new Agent({
+    id: 'OPTIMIZER',
+    name: 'OPTIMIZER',
+    icon: '⚡',
+    color: '#F59E0B',
+    role: 'Performance Optimizer',
+    model: 'codellama',
+    description: 'Profile and optimize code performance',
+    tools: ['code', 'bash', 'file']
+  }),
+  new Agent({
+    id: 'TRANSLATOR',
+    name: 'TRANSLATOR',
+    icon: '🌐',
+    color: '#10B981',
+    role: 'Multi-Language Translator',
+    model: 'llama3.2',
+    description: 'Translate content between 50+ languages',
+    tools: ['file', 'web']
+  }),
+  new Agent({
+    id: 'COMPLIANCE',
+    name: 'COMPLIANCE',
+    icon: '📜',
+    color: '#DC2626',
+    role: 'Compliance Officer',
+    model: 'llama3.2',
+    description: 'Ensure regulatory compliance (GDPR, SOC2, HIPAA)',
+    tools: ['file', 'web', 'search']
+  }),
+  new Agent({
+    id: 'API_TESTER',
+    name: 'API_TESTER',
+    icon: '🔌',
+    color: '#8B5CF6',
+    role: 'API Tester',
+    model: 'codellama',
+    description: 'Test API endpoints and generate test suites',
+    tools: ['code', 'bash', 'web']
+  }),
+  new Agent({
+    id: 'DATABASE',
+    name: 'DATABASE',
+    icon: '🗃️',
+    color: '#0891B2',
+    role: 'Database Administrator',
+    model: 'codellama',
+    description: 'Design schemas, optimize queries, manage migrations',
+    tools: ['code', 'bash', 'file']
   })
 ];
 

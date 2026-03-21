@@ -98,7 +98,7 @@ export class WorkflowStep {
       id: this.id,
       type: this.type,
       name: this.name,
-      status,
+      status: this.status,
       error: this.error,
       startedAt: this.startedAt,
       completedAt: this.completedAt,

@@ -459,10 +459,14 @@ export class WebhookManager {
       .update(payload)
       .digest('hex');
 
-    return crypto.timingSafeEqual(
-      Buffer.from(signature),
-      Buffer.from(`sha256=${expected}`)
-    );
+    try {
+      return crypto.timingSafeEqual(
+        Buffer.from(signature),
+        Buffer.from(`sha256=${expected}`)
+      );
+    } catch {
+      return false;
+    }
   }
 
   /**

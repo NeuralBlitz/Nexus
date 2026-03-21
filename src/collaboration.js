@@ -825,6 +825,177 @@ export async function RoundRobin(agents, tasks, options = {}) {
   };
 }
 
+/**
+ * Consensus voting - agents vote on options, majority wins
+ */
+export async function Consensus(agents, proposal, options = {}) {
+  const { minVotes = Math.ceil(agents.length / 2), requireUnanimous = false } = options;
+  const votes = [];
+
+  for (const agent of agents) {
+    const result = await agent.execute(
+      `Vote on this proposal (respond with APPROVE or REJECT, followed by reasoning):\n\n${proposal}`
+    );
+    const approved = result.toUpperCase().includes('APPROVE');
+    votes.push({
+      agentId: agent.id,
+      agentName: agent.name,
+      vote: approved ? 'approve' : 'reject',
+      reasoning: result,
+      timestamp: Date.now()
+    });
+  }
+
+  const approvals = votes.filter(v => v.vote === 'approve').length;
+  const rejections = votes.filter(v => v.vote === 'reject').length;
+
+  return {
+    proposal,
+    votes,
+    approvals,
+    rejections,
+    totalVotes: votes.length,
+    requiredVotes: requireUnanimous ? agents.length : minVotes,
+    passed: requireUnanimous ? rejections === 0 : approvals >= minVotes,
+    consensusLevel: (approvals / agents.length * 100).toFixed(1) + '%'
+  };
+}
+
+/**
+ * Tournament - agents compete on the same task, best result wins
+ */
+export async function Tournament(agents, task, judgeAgent, options = {}) {
+  const { criteria = 'quality, accuracy, and completeness' } = options;
+
+  // All agents execute the same task
+  const submissions = [];
+  for (const agent of agents) {
+    const startTime = Date.now();
+    try {
+      const result = await agent.execute(task);
+      submissions.push({
+        agentId: agent.id,
+        agentName: agent.name,
+        result,
+        duration: Date.now() - startTime,
+        timestamp: startTime
+      });
+    } catch (error) {
+      submissions.push({
+        agentId: agent.id,
+        agentName: agent.name,
+        error: error.message,
+        duration: Date.now() - startTime
+      });
+    }
+  }
+
+  // Judge evaluates all submissions
+  const evaluation = submissions
+    .filter(s => !s.error)
+    .map((s, i) => `Submission ${i + 1} (by ${s.agentName}):\n${s.result}`)
+    .join('\n\n---\n\n');
+
+  const verdict = await judgeAgent.execute(
+    `Evaluate these submissions for the task "${task}" based on ${criteria}. Rank them 1st, 2nd, 3rd etc and explain your reasoning:\n\n${evaluation}`
+  );
+
+  return {
+    task,
+    submissions,
+    verdict,
+    participantCount: agents.length,
+    successCount: submissions.filter(s => !s.error).length
+  };
+}
+
+/**
+ * Pipeline - stream data through a chain of agents with transformation
+ */
+export async function Pipeline(stages, input, options = {}) {
+  const { onError = 'stop', collectIntermediate = true } = options;
+  const intermediate = [];
+  let current = input;
+
+  for (let i = 0; i < stages.length; i++) {
+    const { agent, transform } = stages[i];
+    const startTime = Date.now();
+
+    try {
+      const task = typeof transform === 'function' ? transform(current) : `Process: ${JSON.stringify(current)}`;
+      const result = await agent.execute(task);
+
+      if (collectIntermediate) {
+        intermediate.push({
+          stage: i,
+          agentId: agent.id,
+          agentName: agent.name,
+          input: current,
+          output: result,
+          duration: Date.now() - startTime
+        });
+      }
+
+      current = result;
+    } catch (error) {
+      if (onError === 'stop') throw error;
+      if (onError === 'skip') continue;
+      if (onError === 'default') {
+        intermediate.push({ stage: i, error: error.message });
+        continue;
+      }
+    }
+  }
+
+  return {
+    input,
+    output: current,
+    stages: stages.length,
+    intermediate
+  };
+}
+
+/**
+ * ParallelMap - execute a task across items in parallel with multiple agents
+ */
+export async function ParallelMap(agents, items, taskTemplate, options = {}) {
+  const { maxConcurrency = agents.length } = options;
+  const results = [];
+  let agentIndex = 0;
+
+  const executeItem = async (item, index) => {
+    const agent = agents[agentIndex % agents.length];
+    agentIndex++;
+    const task = typeof taskTemplate === 'function'
+      ? taskTemplate(item, index)
+      : `${taskTemplate}\n\nItem: ${JSON.stringify(item)}`;
+
+    const startTime = Date.now();
+    try {
+      const result = await agent.execute(task);
+      return { index, agentId: agent.id, item, result, duration: Date.now() - startTime };
+    } catch (error) {
+      return { index, agentId: agent.id, item, error: error.message, duration: Date.now() - startTime };
+    }
+  };
+
+  // Process in batches for concurrency control
+  for (let i = 0; i < items.length; i += maxConcurrency) {
+    const batch = items.slice(i, i + maxConcurrency);
+    const batchResults = await Promise.all(
+      batch.map((item, j) => executeItem(item, i + j))
+    );
+    results.push(...batchResults);
+  }
+
+  return {
+    totalItems: items.length,
+    successCount: results.filter(r => !r.error).length,
+    errorCount: results.filter(r => r.error).length,
+    results
+  };
+}
+
 export default {
   Collaborate,
   Delegate,
@@ -834,5 +1005,9 @@ export default {
   WorkflowOrchestrator,
   Debate,
   ReviewBoard,
-  RoundRobin
+  RoundRobin,
+  Consensus,
+  Tournament,
+  Pipeline,
+  ParallelMap
 };

@@ -573,7 +573,93 @@ export class SecurityManager extends EventEmitter {
    */
   verifyPassword(password, hash, salt) {
     const computed = crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString('hex');
-    return computed === hash;
+    try {
+      return crypto.timingSafeEqual(Buffer.from(computed, 'hex'), Buffer.from(hash, 'hex'));
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Create JWT token
+   */
+  createJWT(payload, secret, options = {}) {
+    const { expiresIn = 3600 } = options;
+    const header = { alg: 'HS256', typ: 'JWT' };
+    const now = Math.floor(Date.now() / 1000);
+    const fullPayload = { ...payload, iat: now, exp: now + expiresIn };
+
+    const encode = (obj) => Buffer.from(JSON.stringify(obj)).toString('base64url');
+    const encodedHeader = encode(header);
+    const encodedPayload = encode(fullPayload);
+    const signature = crypto.createHmac('sha256', secret).update(`${encodedHeader}.${encodedPayload}`).digest('base64url');
+
+    return `${encodedHeader}.${encodedPayload}.${signature}`;
+  }
+
+  /**
+   * Verify JWT token
+   */
+  verifyJWT(token, secret) {
+    try {
+      const [header, payload, signature] = token.split('.');
+      const expectedSig = crypto.createHmac('sha256', secret).update(`${header}.${payload}`).digest('base64url');
+
+      if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSig))) {
+        return { valid: false, error: 'Invalid signature' };
+      }
+
+      const decoded = JSON.parse(Buffer.from(payload, 'base64url').toString());
+      if (decoded.exp && decoded.exp < Math.floor(Date.now() / 1000)) {
+        return { valid: false, error: 'Token expired' };
+      }
+
+      return { valid: true, payload: decoded };
+    } catch (error) {
+      return { valid: false, error: error.message };
+    }
+  }
+
+  /**
+   * Check if user has permission
+   */
+  hasPermission(userId, permission) {
+    const user = this.users.get(userId);
+    if (!user) return false;
+    return user.hasPermission(permission);
+  }
+
+  /**
+   * Get user's role and permissions
+   */
+  getUserPermissions(userId) {
+    const user = this.users.get(userId);
+    if (!user) return null;
+    return {
+      userId: user.id,
+      username: user.username,
+      role: user.role,
+      permissions: Array.from(user.permissions)
+    };
+  }
+
+  /**
+   * Get recent audit log entries
+   */
+  getRecentAuditLog(count = 20) {
+    return this.auditLog.slice(-count).reverse();
+  }
+
+  /**
+   * Query audit log
+   */
+  queryAuditLog(filters = {}) {
+    let results = [...this.auditLog];
+    if (filters.userId) results = results.filter(e => e.userId === filters.userId);
+    if (filters.action) results = results.filter(e => e.action === filters.action);
+    if (filters.result) results = results.filter(e => e.result === filters.result);
+    if (filters.since) results = results.filter(e => e.timestamp >= filters.since);
+    return results.slice(-(filters.limit || 50));
   }
 
   /**

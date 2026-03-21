@@ -418,6 +418,20 @@ export class PluginManager extends EventEmitter {
               } catch (error) {
                 console.error(`Failed to load plugin manifest: ${entry.name}`, error.message);
               }
+            } else {
+              // Fallback: check for inline manifest export in index.js
+              const indexPath = path.join(pluginPath, 'index.js');
+              if (fs.existsSync(indexPath)) {
+                try {
+                  const moduleUrl = pathToFileURL(indexPath).href;
+                  const mod = await import(moduleUrl);
+                  if (mod.manifest) {
+                    this.register(mod.manifest, pluginPath);
+                  }
+                } catch (error) {
+                  // Skip invalid plugins silently
+                }
+              }
             }
           }
         }

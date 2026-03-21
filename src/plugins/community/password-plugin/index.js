@@ -9,7 +9,7 @@ export const manifest = {
 };
 
 let api;
-const crypto = require('crypto');
+import crypto from 'crypto';
 
 export async function init(context) {
   api = context;
@@ -78,14 +78,18 @@ export const functions = {
   },
 
   hash: async (password, options = {}) => {
-    const bcrypt = require('bcryptjs');
-    const rounds = options.rounds || 10;
-    return bcrypt.hashSync(password, rounds);
+    try {
+      const bcrypt = await import('bcryptjs');
+      const rounds = options.rounds || 10;
+      return bcrypt.hashSync(password, rounds);
+    } catch { throw new Error('bcryptjs not installed'); }
   },
 
-  verify: (password, hash) => {
-    const bcrypt = require('bcryptjs');
-    return bcrypt.compareSync(password, hash);
+  verify: async (password, hash) => {
+    try {
+      const bcrypt = await import('bcryptjs');
+      return bcrypt.compareSync(password, hash);
+    } catch { throw new Error('bcryptjs not installed'); }
   },
 
   derive: (password, salt, iterations = 100000, keylen = 32) => {

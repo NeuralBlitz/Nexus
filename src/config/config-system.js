@@ -411,15 +411,15 @@ export class ConfigManager extends EventEmitter {
    * Rebuild flat config from sources
    */
   _rebuildConfig() {
-    const merged = {};
+    let merged = {};
 
     // Merge all source configs
-    for (const [, config] of Object.values(this.config)) {
-      this._deepMerge(merged, config);
+    for (const config of Object.values(this.config)) {
+      merged = this._deepMerge(merged, config);
     }
 
     // Apply overrides
-    this._deepMerge(merged, this.overrides);
+    merged = this._deepMerge(merged, this.overrides);
 
     // Update flat config
     this.flatConfig = merged;
@@ -474,9 +474,64 @@ export class ConfigManager extends EventEmitter {
   export() {
     return {
       config: this.flatConfig,
+      overrides: this.overrides,
       sources: Array.from(this.sources.keys()),
       timestamp: Date.now()
     };
+  }
+
+  /**
+   * Save config to file
+   */
+  async save(filePath) {
+    const fs = await import('fs/promises');
+    const data = JSON.stringify(this.export(), null, 2);
+    await fs.writeFile(filePath, data, 'utf-8');
+    this.emit('config:saved', { path: filePath });
+    return { saved: true, path: filePath };
+  }
+
+  /**
+   * Load config from file
+   */
+  async load(filePath) {
+    const fs = await import('fs/promises');
+    const data = JSON.parse(await fs.readFile(filePath, 'utf-8'));
+    if (data.overrides) {
+      this.overrides = data.overrides;
+      this._rebuildConfig();
+    }
+    this.emit('config:loaded', { path: filePath });
+    return { loaded: true, path: filePath };
+  }
+
+  /**
+   * Reset config to defaults
+   */
+  reset() {
+    this.overrides = {};
+    this._rebuildConfig();
+    this.emit('config:reset');
+  }
+
+  /**
+   * Get all keys
+   */
+  keys() {
+    return this._flattenKeys(this.flatConfig || {});
+  }
+
+  _flattenKeys(obj, prefix = '') {
+    const keys = [];
+    for (const [key, value] of Object.entries(obj)) {
+      const fullKey = prefix ? `${prefix}.${key}` : key;
+      if (value && typeof value === 'object' && !Array.isArray(value)) {
+        keys.push(...this._flattenKeys(value, fullKey));
+      } else {
+        keys.push(fullKey);
+      }
+    }
+    return keys;
   }
 
   /**

@@ -548,6 +548,126 @@ export class KnowledgeGraph extends EventEmitter {
     this.edgeIndex.clear();
     this.emit('graph:cleared');
   }
+
+  /**
+   * Get all nodes of a specific type
+   */
+  getNodesByType(type) {
+    const index = this.nodeIndex.get(type);
+    if (!index) return [];
+    return Array.from(index).map(id => this.nodes.get(id)).filter(Boolean);
+  }
+
+  /**
+   * Get all relationship types between two nodes
+   */
+  getRelationshipTypes(sourceId, targetId) {
+    const types = [];
+    for (const rel of this.relationships.values()) {
+      if (rel.source === sourceId && rel.target === targetId) types.push(rel.type);
+    }
+    return [...new Set(types)];
+  }
+
+  /**
+   * Get strongly connected components (Tarjan's algorithm)
+   */
+  getStronglyConnectedComponents() {
+    const index = new Map();
+    const lowlink = new Map();
+    const onStack = new Set();
+    const stack = [];
+    const components = [];
+    let idx = 0;
+
+    const strongconnect = (nodeId) => {
+      index.set(nodeId, idx);
+      lowlink.set(nodeId, idx);
+      idx++;
+      stack.push(nodeId);
+      onStack.add(nodeId);
+
+      const edges = this.edgeIndex.get(nodeId);
+      if (edges) {
+        for (const relId of edges.outgoing) {
+          const rel = this.relationships.get(relId);
+          if (!rel) continue;
+          const neighbor = rel.target;
+          if (!index.has(neighbor)) {
+            strongconnect(neighbor);
+            lowlink.set(nodeId, Math.min(lowlink.get(nodeId), lowlink.get(neighbor)));
+          } else if (onStack.has(neighbor)) {
+            lowlink.set(nodeId, Math.min(lowlink.get(nodeId), index.get(neighbor)));
+          }
+        }
+      }
+
+      if (lowlink.get(nodeId) === index.get(nodeId)) {
+        const component = [];
+        let w;
+        do {
+          w = stack.pop();
+          onStack.delete(w);
+          component.push(w);
+        } while (w !== nodeId);
+        components.push(component);
+      }
+    };
+
+    for (const nodeId of this.nodes.keys()) {
+      if (!index.has(nodeId)) strongconnect(nodeId);
+    }
+
+    return components;
+  }
+
+  /**
+   * Get graph statistics with more detail
+   */
+  getDetailedStats() {
+    const relTypeCounts = {};
+    for (const rel of this.relationships.values()) {
+      relTypeCounts[rel.type] = (relTypeCounts[rel.type] || 0) + 1;
+    }
+    const nodeTypeCounts = {};
+    for (const node of this.nodes.values()) {
+      nodeTypeCounts[node.type] = (nodeTypeCounts[node.type] || 0) + 1;
+    }
+
+    return {
+      ...this.getStats(),
+      nodeTypes: nodeTypeCounts,
+      relationshipTypes: relTypeCounts,
+      components: this.getStronglyConnectedComponents().length,
+      avgDegree: this.nodes.size > 0
+        ? (this.relationships.size * 2 / this.nodes.size).toFixed(2)
+        : 0
+    };
+  }
+
+  /**
+   * Merge two nodes (move all relationships from source to target)
+   */
+  mergeNodes(keepId, removeId) {
+    const removeNode = this.nodes.get(removeId);
+    if (!removeNode) return false;
+
+    // Redirect all relationships
+    for (const rel of this.relationships.values()) {
+      if (rel.source === removeId) rel.source = keepId;
+      if (rel.target === removeId) rel.target = keepId;
+    }
+
+    // Merge tags
+    const keepNode = this.nodes.get(keepId);
+    if (keepNode && removeNode.tags) {
+      for (const tag of removeNode.tags) keepNode.addTag(tag);
+    }
+
+    this.removeNode(removeId);
+    this.emit('node:merged', { kept: keepId, removed: removeId });
+    return true;
+  }
 }
 
 // Export singleton

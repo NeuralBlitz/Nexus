@@ -60,8 +60,8 @@ export class ValidationSchema {
     });
   }
 
-  object(name, schema) {
-    return this.field(name, 'object', { required: rules?.required, schema });
+  object(name, rules = {}) {
+    return this.field(name, 'object', { required: rules.required, schema: rules.schema });
   }
 
   email(name, rules = {}) {

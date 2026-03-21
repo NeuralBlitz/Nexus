@@ -466,7 +466,7 @@ export class DistributedEventBus extends EventEmitter {
 
     // Queue for processing
     this.processingQueue.push({ event, options });
-    this._processQueue();
+    await this._processQueue();
 
     this.emit('published', { event: event.id, type: event.type });
     return event;
@@ -691,6 +691,86 @@ export class DistributedEventBus extends EventEmitter {
       queueLength: this.processingQueue.length,
       eventStore: this.eventStore.getStats()
     };
+  }
+
+  /**
+   * Subscribe once - auto-unsubscribe after first trigger
+   */
+  once(channel, handler, options = {}) {
+    const wrappedHandler = async (event) => {
+      this.unsubscribe(subscription);
+      return handler(event);
+    };
+    const subscription = this.subscribe(channel, wrappedHandler, options);
+    return subscription;
+  }
+
+  /**
+   * Route events - add routing rules that forward events between channels
+   */
+  addRoute(fromChannel, toChannel, transform = null) {
+    this.subscribe(fromChannel, async (event) => {
+      const payload = transform ? transform(event.payload) : event.payload;
+      await this.publish(new Event(toChannel, payload, {
+        source: `route:${fromChannel}`,
+        correlationId: event.correlationId
+      }));
+    }, { priority: EventPriority.HIGH });
+    return this;
+  }
+
+  /**
+   * Replay events from the event store
+   */
+  async replay(channel, options = {}) {
+    const { since, limit = 100, handler } = options;
+    let events = this.eventStore.getEvents({ channel, since, limit });
+
+    for (const event of events) {
+      const subs = this.subscriptions.get(channel) || [];
+      for (const sub of subs) {
+        if (sub.active) {
+          try { await sub.handler(event); } catch { /* skip */ }
+        }
+      }
+      if (handler) await handler(event);
+    }
+
+    return { replayed: events.length, channel };
+  }
+
+  /**
+   * Get per-channel statistics
+   */
+  getChannelStats() {
+    const stats = {};
+    for (const [channel, subs] of this.subscriptions) {
+      stats[channel] = {
+        subscribers: subs.length,
+        active: subs.filter(s => s.active).length,
+        totalDelivered: subs.reduce((sum, s) => sum + s.stats.delivered, 0),
+        totalFailed: subs.reduce((sum, s) => sum + s.stats.failed, 0)
+      };
+    }
+    return stats;
+  }
+
+  /**
+   * List all active channels
+   */
+  getChannels() {
+    return Array.from(this.subscriptions.keys());
+  }
+
+  /**
+   * Get subscription count
+   */
+  getSubscriptionCount() {
+    let count = 0;
+    for (const subs of this.subscriptions.values()) {
+      count += subs.filter(s => s.active).length;
+    }
+    return count;
   }
 
   /**

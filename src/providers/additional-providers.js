@@ -1038,6 +1038,139 @@ export class StabilityAIProvider extends Provider {
   }
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// NEW PROVIDERS - xAI, Cerebras, SambaNova, SiliconFlow
+// ═══════════════════════════════════════════════════════════════════════════
+
+export class XAIProvider extends Provider {
+  constructor(config) {
+    super({ ...config, name: 'xAI', type: 'cloud' });
+    this.baseUrl = config.baseUrl || 'https://api.x.ai/v1';
+    this.registerModel({ id: 'grok-2', name: 'Grok 2', maxTokens: 131072, costPerToken: 0.00001 });
+    this.registerModel({ id: 'grok-2-mini', name: 'Grok 2 Mini', maxTokens: 131072, costPerToken: 0.000003 });
+  }
+
+  async _executeChat(messages, options) {
+    const body = { model: options.model || 'grok-2', messages: messages.map(m => ({ role: m.role, content: m.content })), temperature: options.temperature || 0.7, max_tokens: options.maxTokens || 4096, stream: false };
+    const response = await this._request('POST', '/chat/completions', body);
+    return { content: response.choices?.[0]?.message?.content || '', role: 'assistant', finishReason: response.choices?.[0]?.finish_reason || 'stop', usage: response.usage || {} };
+  }
+
+  async _checkHealth() { try { await this._request('GET', '/models'); return true; } catch { return false; } }
+
+  async _request(method, path, body = null) {
+    const url = new URL(path, this.baseUrl);
+    return new Promise((resolve, reject) => {
+      const req = https.request({ hostname: url.hostname, port: 443, path: url.pathname, method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${this.apiKey}` } }, (res) => {
+        let data = '';
+        res.on('data', chunk => data += chunk);
+        res.on('end', () => { try { resolve(JSON.parse(data)); } catch { reject(new Error('Invalid JSON')); } });
+      });
+      req.on('error', reject);
+      req.setTimeout(this.config.timeout, () => { req.destroy(); reject(new Error('Timeout')); });
+      if (body) req.write(JSON.stringify(body));
+      req.end();
+    });
+  }
+}
+
+export class CerebrasProvider extends Provider {
+  constructor(config) {
+    super({ ...config, name: 'Cerebras', type: 'cloud' });
+    this.baseUrl = config.baseUrl || 'https://api.cerebras.ai/v1';
+    this.registerModel({ id: 'llama3.1-70b', name: 'Llama 3.1 70B', maxTokens: 8192, costPerToken: 0.000006 });
+    this.registerModel({ id: 'llama3.1-8b', name: 'Llama 3.1 8B', maxTokens: 8192, costPerToken: 0.000001 });
+  }
+
+  async _executeChat(messages, options) {
+    const body = { model: options.model || 'llama3.1-70b', messages: messages.map(m => ({ role: m.role, content: m.content })), temperature: options.temperature || 0.7, max_tokens: options.maxTokens || 4096 };
+    const response = await this._request('POST', '/chat/completions', body);
+    return { content: response.choices?.[0]?.message?.content || '', role: 'assistant', finishReason: response.choices?.[0]?.finish_reason || 'stop', usage: response.usage || {} };
+  }
+
+  async _checkHealth() { try { await this._request('GET', '/models'); return true; } catch { return false; } }
+
+  async _request(method, path, body = null) {
+    const url = new URL(path, this.baseUrl);
+    return new Promise((resolve, reject) => {
+      const req = https.request({ hostname: url.hostname, port: 443, path: url.pathname, method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${this.apiKey}` } }, (res) => {
+        let data = '';
+        res.on('data', chunk => data += chunk);
+        res.on('end', () => { try { resolve(JSON.parse(data)); } catch { reject(new Error('Invalid JSON')); } });
+      });
+      req.on('error', reject);
+      req.setTimeout(this.config.timeout, () => { req.destroy(); reject(new Error('Timeout')); });
+      if (body) req.write(JSON.stringify(body));
+      req.end();
+    });
+  }
+}
+
+export class SambaNovaProvider extends Provider {
+  constructor(config) {
+    super({ ...config, name: 'SambaNova', type: 'cloud' });
+    this.baseUrl = config.baseUrl || 'https://api.sambanova.ai/v1';
+    this.registerModel({ id: 'llama3.1-405b', name: 'Llama 3.1 405B', maxTokens: 8192, costPerToken: 0.00001 });
+    this.registerModel({ id: 'llama3.1-70b', name: 'Llama 3.1 70B', maxTokens: 8192, costPerToken: 0.000004 });
+  }
+
+  async _executeChat(messages, options) {
+    const body = { model: options.model || 'llama3.1-70b', messages: messages.map(m => ({ role: m.role, content: m.content })), temperature: options.temperature || 0.7, max_tokens: options.maxTokens || 4096 };
+    const response = await this._request('POST', '/chat/completions', body);
+    return { content: response.choices?.[0]?.message?.content || '', role: 'assistant', finishReason: response.choices?.[0]?.finish_reason || 'stop', usage: response.usage || {} };
+  }
+
+  async _checkHealth() { try { await this._request('GET', '/models'); return true; } catch { return false; } }
+
+  async _request(method, path, body = null) {
+    const url = new URL(path, this.baseUrl);
+    return new Promise((resolve, reject) => {
+      const req = https.request({ hostname: url.hostname, port: 443, path: url.pathname, method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${this.apiKey}` } }, (res) => {
+        let data = '';
+        res.on('data', chunk => data += chunk);
+        res.on('end', () => { try { resolve(JSON.parse(data)); } catch { reject(new Error('Invalid JSON')); } });
+      });
+      req.on('error', reject);
+      req.setTimeout(this.config.timeout, () => { req.destroy(); reject(new Error('Timeout')); });
+      if (body) req.write(JSON.stringify(body));
+      req.end();
+    });
+  }
+}
+
+export class SiliconFlowProvider extends Provider {
+  constructor(config) {
+    super({ ...config, name: 'SiliconFlow', type: 'cloud' });
+    this.baseUrl = config.baseUrl || 'https://api.siliconflow.cn/v1';
+    this.registerModel({ id: 'qwen2.5-72b', name: 'Qwen 2.5 72B', maxTokens: 32768, costPerToken: 0.000002 });
+    this.registerModel({ id: 'llama3.1-70b', name: 'Llama 3.1 70B', maxTokens: 32768, costPerToken: 0.000002 });
+    this.registerModel({ id: 'deepseek-v2.5', name: 'DeepSeek V2.5', maxTokens: 32768, costPerToken: 0.000002 });
+  }
+
+  async _executeChat(messages, options) {
+    const body = { model: options.model || 'qwen2.5-72b', messages: messages.map(m => ({ role: m.role, content: m.content })), temperature: options.temperature || 0.7, max_tokens: options.maxTokens || 4096 };
+    const response = await this._request('POST', '/chat/completions', body);
+    return { content: response.choices?.[0]?.message?.content || '', role: 'assistant', finishReason: response.choices?.[0]?.finish_reason || 'stop', usage: response.usage || {} };
+  }
+
+  async _checkHealth() { try { await this._request('GET', '/models'); return true; } catch { return false; } }
+
+  async _request(method, path, body = null) {
+    const url = new URL(path, this.baseUrl);
+    return new Promise((resolve, reject) => {
+      const req = https.request({ hostname: url.hostname, port: 443, path: url.pathname, method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${this.apiKey}` } }, (res) => {
+        let data = '';
+        res.on('data', chunk => data += chunk);
+        res.on('end', () => { try { resolve(JSON.parse(data)); } catch { reject(new Error('Invalid JSON')); } });
+      });
+      req.on('error', reject);
+      req.setTimeout(this.config.timeout, () => { req.destroy(); reject(new Error('Timeout')); });
+      if (body) req.write(JSON.stringify(body));
+      req.end();
+    });
+  }
+}
+
 export default {
   GoogleAIProvider,
   MistralProvider,
@@ -1053,5 +1186,9 @@ export default {
   TogetherProvider,
   AnyscaleProvider,
   CloudflareProvider,
-  StabilityAIProvider
+  StabilityAIProvider,
+  XAIProvider,
+  CerebrasProvider,
+  SambaNovaProvider,
+  SiliconFlowProvider
 };

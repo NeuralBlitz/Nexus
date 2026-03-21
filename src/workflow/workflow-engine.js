@@ -799,6 +799,97 @@ export function getWorkflowManager() {
   return manager;
 }
 
+/**
+ * Built-in workflow templates
+ */
+export const WorkflowTemplates = {
+  /**
+   * Code review workflow
+   */
+  codeReview: () => ({
+    name: 'Code Review',
+    description: 'Automated code review with multiple agents',
+    steps: [
+      { id: 'analyze', type: StepType.TASK, name: 'Analyze Code', handler: async (ctx) => ({ issues: [], suggestions: [] }) },
+      { id: 'security', type: StepType.TASK, name: 'Security Check', dependsOn: ['analyze'], handler: async (ctx) => ({ vulnerabilities: [] }) },
+      { id: 'performance', type: StepType.TASK, name: 'Performance Check', dependsOn: ['analyze'], handler: async (ctx) => ({ bottlenecks: [] }) },
+      { id: 'report', type: StepType.TASK, name: 'Generate Report', dependsOn: ['security', 'performance'], handler: async (ctx) => ({ report: 'complete' }) }
+    ]
+  }),
+
+  /**
+   * Data pipeline workflow
+   */
+  dataPipeline: () => ({
+    name: 'Data Pipeline',
+    description: 'ETL data processing pipeline',
+    steps: [
+      { id: 'extract', type: StepType.TASK, name: 'Extract Data', handler: async (ctx) => ({ records: [] }) },
+      { id: 'validate', type: StepType.TASK, name: 'Validate', dependsOn: ['extract'], handler: async (ctx) => ({ valid: true }) },
+      { id: 'transform', type: StepType.TASK, name: 'Transform', dependsOn: ['validate'], handler: async (ctx) => ({ transformed: true }) },
+      { id: 'load', type: StepType.TASK, name: 'Load Data', dependsOn: ['transform'], handler: async (ctx) => ({ loaded: true }) }
+    ]
+  }),
+
+  /**
+   * Multi-agent research workflow
+   */
+  research: () => ({
+    name: 'Multi-Agent Research',
+    description: 'Parallel research with synthesis',
+    steps: [
+      { id: 'topic1', type: StepType.TASK, name: 'Research Topic 1', handler: async (ctx) => ({ findings: 'topic1' }) },
+      { id: 'topic2', type: StepType.TASK, name: 'Research Topic 2', handler: async (ctx) => ({ findings: 'topic2' }) },
+      { id: 'topic3', type: StepType.TASK, name: 'Research Topic 3', handler: async (ctx) => ({ findings: 'topic3' }) },
+      { id: 'synthesize', type: StepType.TASK, name: 'Synthesize', dependsOn: ['topic1', 'topic2', 'topic3'], handler: async (ctx) => ({ summary: 'synthesized' }) }
+    ]
+  }),
+
+  /**
+   * CI/CD pipeline workflow
+   */
+  cicd: () => ({
+    name: 'CI/CD Pipeline',
+    description: 'Build, test, deploy pipeline',
+    steps: [
+      { id: 'lint', type: StepType.TASK, name: 'Lint', handler: async (ctx) => ({ passed: true }) },
+      { id: 'build', type: StepType.TASK, name: 'Build', dependsOn: ['lint'], handler: async (ctx) => ({ artifact: 'build.zip' }) },
+      { id: 'test', type: StepType.TASK, name: 'Test', dependsOn: ['build'], handler: async (ctx) => ({ passed: true }) },
+      { id: 'deploy', type: StepType.TASK, name: 'Deploy', dependsOn: ['test'], handler: async (ctx) => ({ deployed: true }) }
+    ]
+  }),
+
+  /**
+   * Content creation workflow
+   */
+  contentCreation: () => ({
+    name: 'Content Creation',
+    description: 'Research, write, review, publish',
+    steps: [
+      { id: 'research', type: StepType.TASK, name: 'Research', handler: async (ctx) => ({ sources: [] }) },
+      { id: 'outline', type: StepType.TASK, name: 'Create Outline', dependsOn: ['research'], handler: async (ctx) => ({ outline: 'structured' }) },
+      { id: 'write', type: StepType.TASK, name: 'Write Draft', dependsOn: ['outline'], handler: async (ctx) => ({ draft: 'complete' }) },
+      { id: 'review', type: StepType.TASK, name: 'Review', dependsOn: ['write'], handler: async (ctx) => ({ approved: true }) },
+      { id: 'publish', type: StepType.TASK, name: 'Publish', dependsOn: ['review'], handler: async (ctx) => ({ published: true }) }
+    ]
+  }),
+
+  /**
+   * Incident response workflow
+   */
+  incidentResponse: () => ({
+    name: 'Incident Response',
+    description: 'Detect, analyze, contain, resolve',
+    steps: [
+      { id: 'detect', type: StepType.TASK, name: 'Detect Issue', handler: async (ctx) => ({ detected: true }) },
+      { id: 'analyze', type: StepType.TASK, name: 'Analyze Impact', dependsOn: ['detect'], handler: async (ctx) => ({ impact: 'medium' }) },
+      { id: 'contain', type: StepType.TASK, name: 'Contain', dependsOn: ['analyze'], handler: async (ctx) => ({ contained: true }) },
+      { id: 'resolve', type: StepType.TASK, name: 'Resolve', dependsOn: ['contain'], handler: async (ctx) => ({ resolved: true }) },
+      { id: 'report', type: StepType.TASK, name: 'Post-Mortem', dependsOn: ['resolve'], handler: async (ctx) => ({ report: 'complete' }) }
+    ]
+  })
+};
+
 export default {
   Workflow,
   WorkflowStep,
@@ -807,5 +898,6 @@ export default {
   WorkflowState,
   StepState,
   StepType,
+  WorkflowTemplates,
   getWorkflowManager
 };

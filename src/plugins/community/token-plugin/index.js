@@ -9,7 +9,7 @@ export const manifest = {
 };
 
 let api;
-const crypto = require('crypto');
+import crypto from 'crypto';
 const tokens = new Map();
 
 export async function init(context) {

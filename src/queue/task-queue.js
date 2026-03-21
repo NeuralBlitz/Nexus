@@ -547,6 +547,69 @@ export class QueueManager extends EventEmitter {
       queue.resume();
     }
   }
+
+  /**
+   * Get combined stats for all queues
+   */
+  getCombinedStats() {
+    const all = this.getAllStats();
+    const combined = {
+      totalQueues: this.queues.size,
+      totalWaiting: 0,
+      totalActive: 0,
+      totalCompleted: 0,
+      totalFailed: 0,
+      totalDelayed: 0
+    };
+
+    for (const stats of Object.values(all)) {
+      combined.totalWaiting += stats.waiting || 0;
+      combined.totalActive += stats.active || 0;
+      combined.totalCompleted += stats.completed || 0;
+      combined.totalFailed += stats.failed || 0;
+      combined.totalDelayed += stats.delayed || 0;
+    }
+
+    return combined;
+  }
+
+  /**
+   * Schedule a job for later execution
+   */
+  async schedule(queueName, data, delayMs, options = {}) {
+    const queue = this.getQueue(queueName) || this.createQueue(queueName);
+    return queue.add(data, { ...options, delay: delayMs });
+  }
+
+  /**
+   * Add bulk jobs to a queue
+   */
+  addBulk(queueName, jobs) {
+    const queue = this.getQueue(queueName) || this.createQueue(queueName);
+    const results = [];
+    for (const job of jobs) {
+      results.push(queue.add(job.data, job.options || {}));
+    }
+    return results;
+  }
+
+  /**
+   * Get queue names
+   */
+  getQueueNames() {
+    return Array.from(this.queues.keys());
+  }
+
+  /**
+   * Drain a queue (process all jobs)
+   */
+  async drain(queueName) {
+    const queue = this.getQueue(queueName);
+    if (!queue) return { drained: 0 };
+    const count = queue.waiting.length;
+    await queue.process();
+    return { drained: count };
+  }
 }
 
 // Export singleton

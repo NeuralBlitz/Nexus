@@ -978,19 +978,21 @@ export class MemoryManager extends EventEmitter {
   }
 
   /**
-   * Import memories
+   * Import data
    */
   import(data) {
     if (data.episodic) {
-      for (const ep of data.episodic) {
-        this.episodic.record(ep);
+      for (const mem of data.episodic) {
+        this.episodic.store(mem);
       }
     }
+
     if (data.semantic) {
       for (const fact of data.semantic) {
         this.semantic.store(fact);
       }
     }
+
     if (data.procedural) {
       for (const proc of data.procedural) {
         this.procedural.store(proc);
@@ -998,6 +1000,121 @@ export class MemoryManager extends EventEmitter {
     }
 
     this.emit('memory:imported', { count: (data.episodic?.length || 0) + (data.semantic?.length || 0) });
+  }
+
+  /**
+   * Batch remember multiple entries
+   */
+  rememberBatch(entries) {
+    const results = [];
+    for (const entry of entries) {
+      results.push(this.remember(entry.content, entry.options || {}));
+    }
+    return results;
+  }
+
+  /**
+   * Search across all memory types
+   */
+  searchAll(query, options = {}) {
+    const results = {
+      episodic: this.episodic.recall(query, options),
+      semantic: this.semantic.search(query, options),
+      procedural: this.procedural.findMatching({ query, ...options })
+    };
+
+    // Combine and sort by relevance
+    const combined = [
+      ...results.episodic.map(r => ({ ...r, source: 'episodic' })),
+      ...results.semantic.map(r => ({ ...r, source: 'semantic' })),
+      ...results.procedural.map(r => ({ ...r, source: 'procedural' }))
+    ].sort((a, b) => (b.relevance || 0) - (a.relevance || 0));
+
+    return combined.slice(0, options.limit || 20);
+  }
+
+  /**
+   * Get memory summary for a topic
+   */
+  summarize(topic, options = {}) {
+    const memories = this.searchAll(topic, { limit: options.limit || 50 });
+    const byType = { episodic: 0, semantic: 0, procedural: 0 };
+    let totalRelevance = 0;
+
+    for (const m of memories) {
+      byType[m.source]++;
+      totalRelevance += m.relevance || 0;
+    }
+
+    return {
+      topic,
+      totalMemories: memories.length,
+      byType,
+      avgRelevance: memories.length > 0 ? (totalRelevance / memories.length).toFixed(3) : 0,
+      topMemories: memories.slice(0, 5).map(m => ({ content: m.content, source: m.source, relevance: m.relevance }))
+    };
+  }
+
+  /**
+   * Get memory health stats
+   */
+  getHealth() {
+    return {
+      episodic: { total: this.episodic.episodes.size },
+      semantic: this.semantic.getStats(),
+      working: { slots: this.working.slots.size, attentionItems: this.working.attentionQueue.length },
+      totalMemories: this.episodic.episodes.size + this.semantic.facts.size,
+      vectorStore: { documents: this.semantic.vectorStore.documents.length, dimension: 128 },
+      consolidationRunning: this.consolidationRunning,
+      healthy: !this.consolidationRunning
+    };
+  }
+
+  /**
+   * Get memory summary for a topic
+   */
+  summarize(topic, options = {}) {
+    const memories = this.searchAll(topic, { limit: options.limit || 50 });
+    const byType = { episodic: 0, semantic: 0, procedural: 0 };
+    let totalRelevance = 0;
+
+    for (const m of memories) {
+      byType[m.source]++;
+      totalRelevance += m.relevance || 0;
+    }
+
+    return {
+      topic,
+      totalMemories: memories.length,
+      byType,
+      avgRelevance: memories.length > 0 ? (totalRelevance / memories.length).toFixed(3) : 0,
+      topMemories: memories.slice(0, 5).map(m => ({ content: m.content, source: m.source, relevance: m.relevance }))
+    };
+  }
+
+  /**
+   * Forget memories matching criteria
+   */
+  forget(criteria = {}) {
+    let count = 0;
+
+    if (criteria.tag) {
+      count += this.semantic.forgetByTag(criteria.tag);
+      count += this.episodic.forgetByTag?.(criteria.tag) || 0;
+    }
+
+    if (criteria.olderThan) {
+      const cutoff = Date.now() - criteria.olderThan;
+      count += this.semantic.forgetOlderThan?.(cutoff) || 0;
+      count += this.episodic.forgetOlderThan?.(cutoff) || 0;
+    }
+
+    if (criteria.agentId) {
+      count += this.episodic.forgetByAgent?.(criteria.agentId) || 0;
+    }
+
+    this.emit('memory:forgotten', { criteria, count });
+    return count;
   }
 }
 

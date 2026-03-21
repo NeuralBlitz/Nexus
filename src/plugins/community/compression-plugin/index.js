@@ -9,7 +9,7 @@ export const manifest = {
 };
 
 let api;
-const zlib = require('zlib');
+import zlib from 'zlib';
 
 export async function init(context) {
   api = context;

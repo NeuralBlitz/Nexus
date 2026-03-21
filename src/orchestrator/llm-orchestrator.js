@@ -2,6 +2,7 @@
 
 import { EventEmitter } from 'events';
 import crypto from 'crypto';
+import { ModelRegistry, getAllModelProfiles } from '../providers/model-registry.js';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // LLM ORCHESTRATOR
@@ -414,6 +415,63 @@ export class LLMOrchestrator extends EventEmitter {
   }
 
   /**
+   * Load all models from the model registry
+   */
+  loadModelRegistry() {
+    const profiles = getAllModelProfiles();
+    let loaded = 0;
+
+    for (const profile of profiles) {
+      const model = new ModelProfile(profile);
+      this.models.set(model.id, model);
+      loaded++;
+    }
+
+    this.emit('registry:loaded', { total: loaded });
+    return loaded;
+  }
+
+  /**
+   * Get all model IDs
+   */
+  listModels() {
+    return Array.from(this.models.keys()).map(id => {
+      const model = this.models.get(id);
+      return { id, name: model.name, provider: model.provider, enabled: model.enabled };
+    });
+  }
+
+  /**
+   * Search models by query
+   */
+  searchModels(query) {
+    const q = query.toLowerCase();
+    return Object.values(ModelRegistry).filter(m =>
+      m.name.toLowerCase().includes(q) ||
+      m.id.toLowerCase().includes(q) ||
+      m.provider.toLowerCase().includes(q)
+    ).map(m => m.id);
+  }
+
+  /**
+   * Get models by capability
+   */
+  getModelsByCapability(capability) {
+    return Array.from(this.models.values())
+      .filter(m => m.capabilities.includes(capability))
+      .map(m => m.id);
+  }
+
+  /**
+   * Get models by provider
+   */
+  getModelsByProvider(provider) {
+    return Array.from(this.models.values())
+      .filter(m => m.provider === provider)
+      .map(m => m.id);
+  }
+
+  /**
    * Add routing rule
    */
   addRoutingRule(rule) {
@@ -715,6 +773,117 @@ export class LLMOrchestrator extends EventEmitter {
   clearCache() {
     this.cache.clear();
   }
+
+  /**
+   * Get cost estimate for a task
+   */
+  estimateCost(task, modelId = null) {
+    const selection = modelId
+      ? { model: this.models.get(modelId) }
+      : this.selectModel(task);
+
+    if (!selection?.model) return { error: 'No model available' };
+
+    const estimatedTokens = Math.ceil((task.length || 100) / 4) + 500;
+    const cost = estimatedTokens * selection.model.metrics.costPerToken;
+
+    return {
+      model: selection.model.name,
+      estimatedTokens,
+      estimatedCost: `$${cost.toFixed(6)}`,
+      costPerToken: selection.model.metrics.costPerToken,
+      reasoning: selection.reasoning
+    };
+  }
+
+  /**
+   * Get all model health statuses
+   */
+  getModelHealth() {
+    const health = {};
+    for (const [id, model] of this.models) {
+      health[id] = {
+        name: model.name,
+        enabled: model.enabled,
+        qualityScore: model.metrics.qualityScore,
+        avgLatency: Math.round(model.metrics.avgLatency),
+        usageCount: model.metrics.usageCount,
+        lastUsed: model.metrics.lastUsed
+      };
+    }
+    return health;
+  }
+
+  /**
+   * Enable/disable a model
+   */
+  setModelEnabled(modelId, enabled) {
+    const model = this.models.get(modelId);
+    if (model) {
+      model.enabled = enabled;
+      this.emit('model:toggled', { modelId, enabled });
+    }
+    return this;
+  }
+
+  /**
+   * Set model quality score
+   */
+  setModelQuality(modelId, score) {
+    const model = this.models.get(modelId);
+    if (model) {
+      model.metrics.qualityScore = Math.max(0, Math.min(1, score));
+    }
+    return this;
+  }
+
+  /**
+   * Get usage statistics
+   */
+  getUsageStats() {
+    const stats = {
+      totalRequests: 0,
+      totalTokens: 0,
+      totalCost: 0,
+      byModel: {}
+    };
+
+    for (const [id, model] of this.models) {
+      const usage = model.metrics.usageCount;
+      stats.totalRequests += usage;
+      stats.byModel[id] = {
+        name: model.name,
+        requests: usage,
+        avgLatency: Math.round(model.metrics.avgLatency),
+        quality: model.metrics.qualityScore
+      };
+    }
+
+    return stats;
+  }
+
+  /**
+   * Batch complete multiple prompts
+   */
+  async batchComplete(prompts, options = {}) {
+    const { concurrency = 5 } = options;
+    const results = [];
+
+    for (let i = 0; i < prompts.length; i += concurrency) {
+      const batch = prompts.slice(i, i + concurrency);
+      const batchResults = await Promise.allSettled(
+        batch.map(p => this.complete(p, options))
+      );
+      results.push(...batchResults.map((r, j) => ({
+        prompt: batch[j].substring(0, 50),
+        status: r.status,
+        result: r.status === 'fulfilled' ? r.value : null,
+        error: r.status === 'rejected' ? r.reason.message : null
+      })));
+    }
+
+    return results;
+  }
 }
 
 // Export singleton
@@ -723,6 +892,7 @@ let orchestrator = null;
 export function getLLMOrchestrator(options) {
   if (!orchestrator) {
     orchestrator = new LLMOrchestrator(options);
+    orchestrator.loadModelRegistry();
   }
   return orchestrator;
 }
@@ -733,5 +903,6 @@ export default {
   PromptTemplate,
   TaskCategory,
   ModelCapability,
+  ModelRegistry,
   getLLMOrchestrator
 };

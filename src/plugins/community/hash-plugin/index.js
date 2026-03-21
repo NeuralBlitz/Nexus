@@ -8,8 +8,9 @@ export const manifest = {
   permissions: []
 };
 
+import crypto from 'crypto';
+
 let api;
-const crypto = require('crypto');
 
 export async function init(context) {
   api = context;
@@ -31,13 +32,17 @@ export const functions = {
   sha512: (text) => crypto.createHash('sha512').update(text).digest('hex'),
 
   bcrypt: async (text, rounds = 10) => {
-    const bcrypt = require('bcryptjs');
-    return bcrypt.hashSync(text, rounds);
+    try {
+      const bcrypt = await import('bcryptjs');
+      return bcrypt.hashSync(text, rounds);
+    } catch { throw new Error('bcryptjs not installed'); }
   },
 
-  verifyBcrypt: (text, hash) => {
-    const bcrypt = require('bcryptjs');
-    return bcrypt.compareSync(text, hash);
+  verifyBcrypt: async (text, hash) => {
+    try {
+      const bcrypt = await import('bcryptjs');
+      return bcrypt.compareSync(text, hash);
+    } catch { throw new Error('bcryptjs not installed'); }
   },
 
   hmac: (text, secret, algorithm = 'sha256') => {
@@ -53,8 +58,8 @@ export const functions = {
   base64ToHex: (base64) => Buffer.from(base64, 'base64').toString('hex'),
 
   uuid: () => crypto.randomUUID(),
-  uuidv1: () => require('uuid').v1(),
-  uuidv4: () => require('uuid').v4(),
+  uuidv1: async () => { const { v1 } = await import('uuid'); return v1(); },
+  uuidv4: async () => { const { v4 } = await import('uuid'); return v4(); },
 
   crc32: (text) => {
     let crc = 0xFFFFFFFF;

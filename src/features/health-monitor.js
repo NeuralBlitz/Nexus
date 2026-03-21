@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events';
 import crypto from 'crypto';
+import os from 'os';
 
 export class HealthStatus {
   static OK = 'ok';
@@ -74,7 +75,7 @@ export class HealthMonitor extends EventEmitter {
     });
 
     this.registerCheck('cpu', async () => {
-      const load = require('os').loadavg();
+      const load = os.loadavg();
       return {
         status: load[0] > 4 ? HealthStatus.DEGRADED : HealthStatus.OK,
         metrics: {

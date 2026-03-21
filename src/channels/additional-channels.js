@@ -699,6 +699,89 @@ export class WebmentionChannel extends Channel {
   async _cleanup() {}
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// WEBHOOK CHANNEL
+// ═══════════════════════════════════════════════════════════════════════════
+
+export class WebhookChannel extends Channel {
+  constructor(config) {
+    super({ ...config, type: 'webhook' });
+    this.endpoints = new Map();
+    this.secret = config.secret;
+    this.headers = config.headers || {};
+    this.timeout = config.timeout || 10000;
+    this.retryAttempts = config.retryAttempts || 3;
+  }
+
+  async _initialize() {
+    this.registerHandler(MessageType.TEXT, async (message, session) => {
+      const target = this.endpoints.get(session.id) || this.endpoints.get('default');
+      if (target) await this._sendWebhook(target, message);
+    });
+  }
+
+  registerEndpoint(name, url, options = {}) {
+    this.endpoints.set(name, { url, headers: options.headers || {}, secret: options.secret || this.secret });
+    return this;
+  }
+
+  removeEndpoint(name) {
+    this.endpoints.delete(name);
+    return this;
+  }
+
+  async _send(target, message, options = {}) {
+    const endpoint = typeof target === 'string'
+      ? this.endpoints.get(target) || { url: target, headers: {}, secret: this.secret }
+      : target;
+
+    await this._sendWebhook(endpoint, message);
+  }
+
+  async _sendWebhook(endpoint, message, attempt = 1) {
+    try {
+      const body = JSON.stringify({
+        event: 'message',
+        timestamp: Date.now(),
+        message: typeof message === 'string' ? message : message.content || JSON.stringify(message)
+      });
+
+      const headers = { 'Content-Type': 'application/json', ...this.headers, ...endpoint.headers };
+
+      if (endpoint.secret) {
+        const crypto = await import('crypto');
+        const sig = crypto.createHmac('sha256', endpoint.secret).update(body).digest('hex');
+        headers['X-Webhook-Signature'] = `sha256=${sig}`;
+      }
+
+      const response = await fetch(endpoint.url, {
+        method: 'POST',
+        headers,
+        body,
+        signal: AbortSignal.timeout(this.timeout)
+      });
+
+      if (!response.ok && attempt < this.retryAttempts) {
+        await new Promise(r => setTimeout(r, 1000 * attempt));
+        return this._sendWebhook(endpoint, message, attempt + 1);
+      }
+
+      this.stats.messagesSent++;
+      return { success: response.ok, status: response.status };
+    } catch (error) {
+      if (attempt < this.retryAttempts) {
+        await new Promise(r => setTimeout(r, 1000 * attempt));
+        return this._sendWebhook(endpoint, message, attempt + 1);
+      }
+      throw error;
+    }
+  }
+
+  async _cleanup() {
+    this.endpoints.clear();
+  }
+}
+
 export const additionalChannels = [
   EmailChannel,
   SMSChannel,
@@ -709,7 +792,8 @@ export const additionalChannels = [
   PushoverChannel,
   SignalChannel,
   WebRTCChannel,
-  WebmentionChannel
+  WebmentionChannel,
+  WebhookChannel
 ];
 
 export default additionalChannels;

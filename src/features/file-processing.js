@@ -178,9 +178,9 @@ export class VideoProcessor extends FileProcessor {
       name: file.name,
       size: file.size,
       type: file.mimetype,
-      duration: options.duration || 0,
-      width: options.width || 1920,
-      height: options.height || 1080
+      duration: file.duration || 0,
+      width: file.width || 1920,
+      height: file.height || 1080
     };
   }
 }

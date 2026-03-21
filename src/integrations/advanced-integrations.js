@@ -212,10 +212,14 @@ export class WebhookVerifier extends EventEmitter {
     hmac.update(payload);
     const expected = hmac.digest('hex');
 
-    return crypto.timingSafeEqual(
-      Buffer.from(sig, 'hex'),
-      Buffer.from(expected, 'hex')
-    );
+    try {
+      return crypto.timingSafeEqual(
+        Buffer.from(sig, 'hex'),
+        Buffer.from(expected, 'hex')
+      );
+    } catch {
+      return false;
+    }
   }
 
   /**

@@ -929,6 +929,86 @@ export class MonitoringSystem extends EventEmitter {
       clearInterval(this.systemMetricsInterval);
     }
   }
+
+  /**
+   * Get metrics in JSON format for export
+   */
+  getMetricsJSON() {
+    const metrics = {};
+    for (const [name, metric] of this.metrics) {
+      metrics[name] = {
+        type: metric.type,
+        value: metric.value,
+        labels: Object.fromEntries(metric.labels),
+        lastUpdated: metric.lastUpdated
+      };
+    }
+    return { timestamp: Date.now(), metrics };
+  }
+
+  /**
+   * Create a histogram observation
+   */
+  observeHistogram(name, value, labels = {}) {
+    const metric = this.getMetric(name);
+    if (metric) {
+      metric.observe(value, labels);
+    }
+  }
+
+  /**
+   * Get top N slowest traces
+   */
+  getSlowTraces(n = 10) {
+    return Array.from(this.traces.values())
+      .map(trace => ({
+        traceId: trace.traceId,
+        name: trace.name,
+        duration: trace.endTime ? trace.endTime - trace.startTime : Date.now() - trace.startTime,
+        spanCount: trace.spans.size,
+        error: trace.error
+      }))
+      .sort((a, b) => b.duration - a.duration)
+      .slice(0, n);
+  }
+
+  /**
+   * Reset all metrics
+   */
+  resetAll() {
+    for (const metric of this.metrics.values()) {
+      metric.reset();
+    }
+    this.traces.clear();
+    this.alertHistory = [];
+    this.emit('monitoring:reset');
+  }
+
+  /**
+   * Export metrics to Prometheus text format
+   */
+  exportPrometheus() {
+    const lines = [];
+    for (const [name, metric] of this.metrics) {
+      const help = `# HELP ${name} ${metric.description || ''}`;
+      const type = `# TYPE ${name} ${metric.type}`;
+      lines.push(help, type);
+
+      if (metric.type === 'counter' || metric.type === 'gauge') {
+        const labels = Array.from(metric.labels.entries())
+          .map(([k, v]) => `${k}="${v}"`).join(',');
+        const labelStr = labels ? `{${labels}}` : '';
+        lines.push(`${name}${labelStr} ${metric.value}`);
+      } else if (metric.type === 'histogram' && metric.buckets) {
+        for (const [bound, count] of Object.entries(metric.buckets)) {
+          lines.push(`${name}_bucket{le="${bound}"} ${count}`);
+        }
+        lines.push(`${name}_count ${metric.count}`);
+        lines.push(`${name}_sum ${metric.sum}`);
+      }
+    }
+    return lines.join('\n');
+  }
 }
 
 // Export singleton

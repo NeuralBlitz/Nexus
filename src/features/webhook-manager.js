@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events';
+import crypto from 'crypto';
 
 export class WebhookEndpoint {
   constructor(config) {
@@ -190,7 +191,6 @@ export class WebhookManager extends EventEmitter {
   }
 
   sign(body, secret) {
-    const crypto = require('crypto');
     const hmac = crypto.createHmac('sha256', secret);
     hmac.update(JSON.stringify(body));
     return `sha256=${hmac.digest('hex')}`;
@@ -264,7 +264,6 @@ export class WebhookManager extends EventEmitter {
 }
 
 export function createWebhookSignature(body, secret, timestamp) {
-  const crypto = require('crypto');
   const signature = crypto
     .createHmac('sha256', secret)
     .update(`${timestamp}.${JSON.stringify(body)}`)

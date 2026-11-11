@@ -17,16 +17,21 @@ function response() {
 }
 
 test('browser session exchanges a valid header key for an HttpOnly cookie', () => {
-  const sessions = createBrowserSessions();
-  const denied = response();
-  sessions.login(request(), denied);
-  assert.equal(denied.code, 401);
-
-  const accepted = response();
-  sessions.login(request({ 'x-api-key': KEY }), accepted);
-  // The host key is supplied via environment only in production: this test
-  // sets it explicitly and restores its original value in the next test setup.
-  assert.equal(accepted.code, 401);
+  const original = process.env.NEXUS_API_KEY;
+  try {
+    process.env.NEXUS_API_KEY = KEY;
+    const sessions = createBrowserSessions();
+    const denied = response();
+    sessions.login(request(), denied);
+    assert.equal(denied.code, 401);
+    const accepted = response();
+    sessions.login(request({ 'x-api-key': KEY }), accepted);
+    assert.equal(accepted.code, 204);
+    assert.match(accepted.headers['Set-Cookie'], /HttpOnly; SameSite=Strict/);
+  } finally {
+    if (original === undefined) delete process.env.NEXUS_API_KEY;
+    else process.env.NEXUS_API_KEY = original;
+  }
 });
 
 test('session permits same-origin upgrades, expires, and never permits cross-origin use', () => {

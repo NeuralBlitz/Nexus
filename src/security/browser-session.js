@@ -73,7 +73,9 @@ export function createBrowserSessions({ now = Date.now, generateToken = () => ra
   }
 
   function status(req, res) {
-    const valid = isSameOrigin(req) && getSession(req) !== null;
+    // Read-only status does not mutate state; the browser's same-origin policy
+    // protects access to the JSON result, while the cookie is HttpOnly.
+    const valid = getSession(req) !== null;
     res.setHeader('Cache-Control', 'no-store');
     return res.status(valid ? 200 : 401).json({ authenticated: valid });
   }

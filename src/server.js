@@ -11,7 +11,7 @@ import fs from 'fs';
 import https from 'https';
 import http from 'http';
 import apiRoutes, { attachContext } from './api/routes.js';
-import { mountNexusNetworkSecurity } from './security/network-entry.js';
+import { mountNexusNetworkSecurity, requireSocketAuthorization } from './security/network-entry.js';
 import { getDatabase } from './persistence.js';
 import { getGitHub, getSlack, getWebhookManager, createWebhookMiddleware } from './integrations.js';
 import gitTool from './tools/git.js';
@@ -349,10 +349,10 @@ app.use(express.static(join(rootDir, 'src/web/public')));
 const server = createServer(app);
 const wss = new WebSocketServer({ noServer: true });
 // Use one production-tested installation for both HTTP API and WS upgrades.
-mountNexusNetworkSecurity(app, server, wss);
+const browserSessions = mountNexusNetworkSecurity(app, server, wss);
 
 // WebSocket handling
-wss.on('connection', (ws) => {
+wss.on('connection', (ws, request) => {
   // Connection state
   ws.isAlive = true;
   ws.subscriptions = new Set(); // specific agent IDs, empty means subscribeAll
@@ -365,6 +365,7 @@ wss.on('connection', (ws) => {
   ws.on('pong', () => { ws.isAlive = true; });
   
   ws.on('message', async (msg) => {
+    if (!requireSocketAuthorization(browserSessions, request, ws)) return;
     try {
       const cmd = JSON.parse(msg);
       await handleCommand(ws, cmd);

@@ -278,8 +278,37 @@ Examples:
     // WebSocket Connection
     // ============================================
     
-    function connectWebSocket() {
+    // Exchange the operator's key once for a short-lived, HttpOnly session.
+    // Never store the key in localStorage, a cookie, or a WebSocket URL.
+    async function ensureBrowserSession() {
+      try {
+        const status = await fetch('/auth/status', { credentials: 'same-origin', cache: 'no-store' });
+        if (status.ok) return true;
+
+        const key = window.prompt('NEXUS operator API key (not saved in your browser):');
+        if (!key) return false;
+        const login = await fetch('/auth/session', {
+          method: 'POST',
+          headers: { 'x-api-key': key },
+          credentials: 'same-origin'
+        });
+        if (!login.ok) {
+          log('Authentication failed (' + login.status + ')', 'ERROR');
+          return false;
+        }
+        return true;
+      } catch (error) {
+        log('Authentication service unavailable', 'ERROR');
+        return false;
+      }
+    }
+
+    async function connectWebSocket() {
       updateConnectionStatus('connecting');
+      if (!await ensureBrowserSession()) {
+        updateConnectionStatus('disconnected');
+        return;
+      }
       
       try {
         ws = new WebSocket(WS_URL);
@@ -913,18 +942,8 @@ Examples:
       send({ type: 'GET_PROVIDERS' });
       log('Checking providers...', 'INFO');
       
-      // Also try REST API
-      fetch(`${API_BASE}/api/providers`)
-        .then(res => res.json())
-        .then(data => {
-          if (data.providers) {
-            state.providers = data.providers;
-            renderProviders();
-          }
-        })
-        .catch(err => {
-          console.log('REST API not available:', err.message);
-        });
+      // The operator dashboard uses its authenticated WebSocket here.
+      // Header-authenticated API clients continue to use /api/providers.
     }
     
     // ============================================

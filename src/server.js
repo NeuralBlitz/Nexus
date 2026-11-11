@@ -3,13 +3,15 @@
 import express from 'express';
 import { createServer } from 'http';
 import { WebSocketServer } from 'ws';
-import { spawn, execSync } from 'child_process';
+import { spawn } from 'child_process';
+import { runOpenCode } from './providers/opencode-runner.js';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import fs from 'fs';
 import https from 'https';
 import http from 'http';
 import apiRoutes, { attachContext } from './api/routes.js';
+import { mountNexusNetworkSecurity, requireSocketAuthorization } from './security/network-entry.js';
 import { getDatabase } from './persistence.js';
 import { getGitHub, getSlack, getWebhookManager, createWebhookMiddleware } from './integrations.js';
 import gitTool from './tools/git.js';
@@ -185,19 +187,7 @@ class OpenCodeProvider {
   }
 
   async complete(prompt, options = {}) {
-    return new Promise((resolve, reject) => {
-      try {
-        const output = execSync(`opencode run "${prompt.replace(/"/g, '\\"')}" 2>&1`, { timeout: 60000 });
-        const clean = output.toString()
-          .replace(/\x1b\[[0-9;]*m/g, '')
-          .replace(/^> build · .+$/gm, '')
-          .replace(/^◈ .+$/gm, '')
-          .trim();
-        resolve({ content: clean, provider: this.name });
-      } catch (e) {
-        reject(new Error(e.message || 'OpenCode failed'));
-      }
-    });
+    return runOpenCode(prompt, options);
   }
 }
 
@@ -357,10 +347,12 @@ app.use(express.json());
 app.use(express.static(join(rootDir, 'src/web/public')));
 
 const server = createServer(app);
-const wss = new WebSocketServer({ server });
+const wss = new WebSocketServer({ noServer: true });
+// Use one production-tested installation for both HTTP API and WS upgrades.
+const browserSessions = mountNexusNetworkSecurity(app, server, wss);
 
 // WebSocket handling
-wss.on('connection', (ws) => {
+wss.on('connection', (ws, request) => {
   // Connection state
   ws.isAlive = true;
   ws.subscriptions = new Set(); // specific agent IDs, empty means subscribeAll
@@ -373,6 +365,7 @@ wss.on('connection', (ws) => {
   ws.on('pong', () => { ws.isAlive = true; });
   
   ws.on('message', async (msg) => {
+    if (!requireSocketAuthorization(browserSessions, request, ws)) return;
     try {
       const cmd = JSON.parse(msg);
       await handleCommand(ws, cmd);
@@ -530,7 +523,7 @@ async function handleCommand(ws, cmd) {
   }
 }
 
-// REST API - Mount new routes
+// HTTP and WS perimeter is installed above, before application endpoints.
 app.use('/api', attachContext(state, providers));
 app.use('/api', apiRoutes);
 
@@ -2371,7 +2364,7 @@ app.post('/api/v5/hubspot/deals', async (req, res) => {
 // STARTUP
 // ═══════════════════════════════════════════════════════════════════════════
 
-server.listen(CONFIG.port, '0.0.0.0', async () => {
+server.listen(CONFIG.port, process.env.NEXUS_HOST || '127.0.0.1', async () => {
   console.log('');
   console.log('╔═══════════════════════════════════════════════════════════════════════════╗');
   console.log('║                                                                       ║');

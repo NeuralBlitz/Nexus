@@ -10,6 +10,7 @@ import fs from 'fs';
 import https from 'https';
 import http from 'http';
 import apiRoutes, { attachContext } from './api/routes.js';
+import { authorizeNetworkRequest, requireNetworkAuthorization } from './security/network-gate.js';
 import { getDatabase } from './persistence.js';
 import { getGitHub, getSlack, getWebhookManager, createWebhookMiddleware } from './integrations.js';
 import gitTool from './tools/git.js';
@@ -357,7 +358,22 @@ app.use(express.json());
 app.use(express.static(join(rootDir, 'src/web/public')));
 
 const server = createServer(app);
-const wss = new WebSocketServer({ server });
+const wss = new WebSocketServer({ noServer: true });
+
+// Reject unauthenticated WebSocket upgrades before accepting a socket.
+// Native browser WebSocket clients will need a compatible authenticated
+// session mechanism; query-string credentials are intentionally unsupported.
+server.on('upgrade', (request, socket, head) => {
+  const decision = authorizeNetworkRequest(request);
+  if (!decision.allowed) {
+    socket.write(`HTTP/1.1 ${decision.status} ${decision.status === 503 ? 'Service Unavailable' : 'Unauthorized'}\r\nConnection: close\r\n\r\n`);
+    socket.destroy();
+    return;
+  }
+  wss.handleUpgrade(request, socket, head, (ws) => {
+    wss.emit('connection', ws, request);
+  });
+});
 
 // WebSocket handling
 wss.on('connection', (ws) => {
@@ -530,7 +546,8 @@ async function handleCommand(ws, cmd) {
   }
 }
 
-// REST API - Mount new routes
+// REST API - deny unauthenticated requests before reaching any route.
+app.use('/api', requireNetworkAuthorization);
 app.use('/api', attachContext(state, providers));
 app.use('/api', apiRoutes);
 

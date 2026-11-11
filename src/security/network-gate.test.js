@@ -5,7 +5,7 @@ import { authorizeNetworkRequest, requireNetworkAuthorization } from './network-
 const KEY = 'this-is-a-demo-test-key-at-least-32-chars';
 
 test('denies requests when server authentication is not configured', () => {
-  assert.equal(authorizeNetworkRequest({ headers: {} }, undefined).status, 503);
+  assert.equal(authorizeNetworkRequest({ headers: {} }, null).status, 503);
   assert.equal(authorizeNetworkRequest({ headers: {} }, 'short').status, 503);
 });
 

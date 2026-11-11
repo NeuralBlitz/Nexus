@@ -28,5 +28,5 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm run build --if-present
-    - run: node --test src/security/network-gate.test.js
+    - run: node --test src/security/network-gate.test.js src/providers/opencode-runner.test.js
     - run: npm test

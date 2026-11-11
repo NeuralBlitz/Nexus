@@ -11,8 +11,7 @@ import fs from 'fs';
 import https from 'https';
 import http from 'http';
 import apiRoutes, { attachContext } from './api/routes.js';
-import { requireNetworkAuthorization } from './security/network-gate.js';
-import { createBrowserSessions } from './security/browser-session.js';
+import { mountNexusNetworkSecurity } from './security/network-entry.js';
 import { getDatabase } from './persistence.js';
 import { getGitHub, getSlack, getWebhookManager, createWebhookMiddleware } from './integrations.js';
 import gitTool from './tools/git.js';
@@ -349,21 +348,8 @@ app.use(express.static(join(rootDir, 'src/web/public')));
 
 const server = createServer(app);
 const wss = new WebSocketServer({ noServer: true });
-const browserSessions = createBrowserSessions();
-
-// Reject unauthenticated WebSocket upgrades before accepting a socket.
-// Native browser WebSocket clients will need a compatible authenticated
-// session mechanism; query-string credentials are intentionally unsupported.
-server.on('upgrade', (request, socket, head) => {
-  const decision = browserSessions.authorizeUpgrade(request);
-  if (!decision.allowed) {
-    socket.end(`HTTP/1.1 ${decision.status} ${decision.status === 503 ? 'Service Unavailable' : 'Unauthorized'}\r\nConnection: close\r\n\r\n`);
-    return;
-  }
-  wss.handleUpgrade(request, socket, head, (ws) => {
-    wss.emit('connection', ws, request);
-  });
-});
+// Use one production-tested installation for both HTTP API and WS upgrades.
+mountNexusNetworkSecurity(app, server, wss);
 
 // WebSocket handling
 wss.on('connection', (ws) => {
@@ -536,14 +522,7 @@ async function handleCommand(ws, cmd) {
   }
 }
 
-// Browser operator sessions are short-lived, HttpOnly and origin-checked.
-// The bootstrap API key is never embedded in HTML or WebSocket URLs.
-app.post('/auth/session', browserSessions.login);
-app.get('/auth/status', browserSessions.status);
-app.post('/auth/logout', browserSessions.logout);
-
-// REST API - deny unauthenticated requests before reaching any route.
-app.use('/api', requireNetworkAuthorization);
+// HTTP and WS perimeter is installed above, before application endpoints.
 app.use('/api', attachContext(state, providers));
 app.use('/api', apiRoutes);
 

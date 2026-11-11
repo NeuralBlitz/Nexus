@@ -3,7 +3,8 @@
 import express from 'express';
 import { createServer } from 'http';
 import { WebSocketServer } from 'ws';
-import { spawn, execSync } from 'child_process';
+import { spawn } from 'child_process';
+import { runOpenCode } from './providers/opencode-runner.js';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import fs from 'fs';
@@ -186,19 +187,7 @@ class OpenCodeProvider {
   }
 
   async complete(prompt, options = {}) {
-    return new Promise((resolve, reject) => {
-      try {
-        const output = execSync(`opencode run "${prompt.replace(/"/g, '\\"')}" 2>&1`, { timeout: 60000 });
-        const clean = output.toString()
-          .replace(/\x1b\[[0-9;]*m/g, '')
-          .replace(/^> build · .+$/gm, '')
-          .replace(/^◈ .+$/gm, '')
-          .trim();
-        resolve({ content: clean, provider: this.name });
-      } catch (e) {
-        reject(new Error(e.message || 'OpenCode failed'));
-      }
-    });
+    return runOpenCode(prompt, options);
   }
 }
 

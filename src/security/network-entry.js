@@ -25,3 +25,14 @@ export function mountNexusNetworkSecurity(app, server, wss, { browserSessions = 
   });
   return browserSessions;
 }
+
+/**
+ * Re-check an established WebSocket client's credentials before dispatching
+ * commands; a cookie expiry or revoked session must not remain privileged.
+ */
+export function requireSocketAuthorization(browserSessions, request, socket) {
+  const decision = browserSessions.authorizeUpgrade(request);
+  if (decision.allowed) return true;
+  socket.close(1008, 'Authentication expired');
+  return false;
+}

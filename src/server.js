@@ -3,7 +3,7 @@
 import express from 'express';
 import { createServer } from 'http';
 import { WebSocketServer } from 'ws';
-import { spawn, execSync } from 'child_process';
+import { spawn, spawnSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import fs from 'fs';
@@ -187,7 +187,18 @@ class OpenCodeProvider {
   async complete(prompt, options = {}) {
     return new Promise((resolve, reject) => {
       try {
-        const output = execSync(`opencode run "${prompt.replace(/"/g, '\\"')}" 2>&1`, { timeout: 60000 });
+        // Pass untrusted prompts as an argv element; never interpolate them into a shell.
+        const result = spawnSync('opencode', ['run', String(prompt)], {
+          timeout: 60000,
+          encoding: 'utf8',
+          maxBuffer: 10 * 1024 * 1024,
+          shell: false
+        });
+        if (result.error) throw result.error;
+        if (result.status !== 0) {
+          throw new Error(`OpenCode exited with status ${result.status ?? 'unknown'}`);
+        }
+        const output = result.stdout || '';
         const clean = output.toString()
           .replace(/\x1b\[[0-9;]*m/g, '')
           .replace(/^> build · .+$/gm, '')

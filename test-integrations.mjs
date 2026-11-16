@@ -992,4 +992,6 @@ if (results.failed === 0) {
   console.log('\n🎉 All integrations passed! NEXUS Platform v2.0 is fully functional.\n');
 } else {
   console.log(`\n⚠️  ${results.failed} test(s) failed.\n`);
+  // Make reported integration failures observable to CI and callers.
+  process.exitCode = 1;
 }

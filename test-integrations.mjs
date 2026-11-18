@@ -55,16 +55,19 @@ console.log('║        NEXUS PLATFORM v2.0 - INTEGRATION TEST SUITE            
 console.log('╚════════════════════════════════════════════════════════════════════════╝');
 console.log('\n');
 
-await testClass('App Integrations (v5)', async ({ pass }) => {
+await testClass('App Integrations (v5)', async ({ pass, fail }) => {
   const { NotionIntegration, CanvaIntegration, FigmaIntegration, LinearIntegration,
           JiraIntegration, TrelloIntegration, AirtableIntegration, 
           GoogleWorkspaceIntegration, SalesforceIntegration, HubSpotIntegration } = 
     await import('./src/integrations/app-integrations.js');
   
   const notion = new NotionIntegration({ apiKey: 'test-key' });
-  pass('Notion: isConfigured() works');
-  pass('Notion: search() method exists');
-  pass('Notion: getUsers() method exists');
+  if (typeof notion.isConfigured === 'function') pass('Notion: isConfigured() method exists');
+  else fail('Notion: isConfigured() method exists', 'Missing method');
+  if (typeof notion.search === 'function') pass('Notion: search() method exists');
+  else fail('Notion: search() method exists', 'Missing method');
+  if (typeof notion.getUsers === 'function') pass('Notion: getUsers() method exists');
+  else fail('Notion: getUsers() method exists', 'Missing method');
   
   const canva = new CanvaIntegration({ accessToken: 'test', clientId: 'test', clientSecret: 'test' });
   pass('Canva: isConfigured() works');

@@ -8,7 +8,7 @@
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
     "cli": "node src/cli.js",
-    "test": "node test-all-modules.mjs",
+    "test": "node --test src/security/opencode-source-contract.test.js && node test-all-modules.mjs",
     "test:modules": "node test-all-modules.mjs",
     "test:integrations": "node test-integrations.mjs",
     "lint": "echo \"Linting not configured - would run eslint or similar\"",

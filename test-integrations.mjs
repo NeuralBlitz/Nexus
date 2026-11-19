@@ -55,26 +55,33 @@ console.log('║        NEXUS PLATFORM v2.0 - INTEGRATION TEST SUITE            
 console.log('╚════════════════════════════════════════════════════════════════════════╝');
 console.log('\n');
 
-await testClass('App Integrations (v5)', async ({ pass }) => {
+await testClass('App Integrations (v5)', async ({ pass, fail }) => {
   const { NotionIntegration, CanvaIntegration, FigmaIntegration, LinearIntegration,
           JiraIntegration, TrelloIntegration, AirtableIntegration, 
           GoogleWorkspaceIntegration, SalesforceIntegration, HubSpotIntegration } = 
     await import('./src/integrations/app-integrations.js');
   
   const notion = new NotionIntegration({ apiKey: 'test-key' });
-  pass('Notion: isConfigured() works');
-  pass('Notion: search() method exists');
-  pass('Notion: getUsers() method exists');
+  if (typeof notion.isConfigured === 'function') pass('Notion: isConfigured() method exists');
+  else fail('Notion: isConfigured() method exists', 'Missing method');
+  if (typeof notion.search === 'function') pass('Notion: search() method exists');
+  else fail('Notion: search() method exists', 'Missing method');
+  if (typeof notion.getUsers === 'function') pass('Notion: getUsers() method exists');
+  else fail('Notion: getUsers() method exists', 'Missing method');
   
   const canva = new CanvaIntegration({ accessToken: 'test', clientId: 'test', clientSecret: 'test' });
   pass('Canva: isConfigured() works');
-  pass('Canva: listDesigns() method exists');
-  pass('Canva: exportDesign() method exists');
+  if (typeof canva.listDesigns === 'function') pass('Canva: listDesigns() method exists');
+  else fail('Canva: listDesigns() method exists', 'Missing method');
+  if (typeof canva.exportDesign === 'function') pass('Canva: exportDesign() method exists');
+  else fail('Canva: exportDesign() method exists', 'Missing method');
   
   const figma = new FigmaIntegration({ accessToken: 'test-token', fileKey: 'test-file' });
   pass('Figma: isConfigured() works');
-  pass('Figma: getFile() method exists');
-  pass('Figma: getImages() method exists');
+  if (typeof figma.getFile === 'function') pass('Figma: getFile() method exists');
+  else fail('Figma: getFile() method exists', 'Missing method');
+  if (typeof figma.getImages === 'function') pass('Figma: getImages() method exists');
+  else fail('Figma: getImages() method exists', 'Missing method');
   
   const linear = new LinearIntegration({ apiKey: 'test-key' });
   pass('Linear: isConfigured() works');

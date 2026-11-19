@@ -71,13 +71,17 @@ await testClass('App Integrations (v5)', async ({ pass, fail }) => {
   
   const canva = new CanvaIntegration({ accessToken: 'test', clientId: 'test', clientSecret: 'test' });
   pass('Canva: isConfigured() works');
-  pass('Canva: listDesigns() method exists');
-  pass('Canva: exportDesign() method exists');
+  if (typeof canva.listDesigns === 'function') pass('Canva: listDesigns() method exists');
+  else fail('Canva: listDesigns() method exists', 'Missing method');
+  if (typeof canva.exportDesign === 'function') pass('Canva: exportDesign() method exists');
+  else fail('Canva: exportDesign() method exists', 'Missing method');
   
   const figma = new FigmaIntegration({ accessToken: 'test-token', fileKey: 'test-file' });
   pass('Figma: isConfigured() works');
-  pass('Figma: getFile() method exists');
-  pass('Figma: getImages() method exists');
+  if (typeof figma.getFile === 'function') pass('Figma: getFile() method exists');
+  else fail('Figma: getFile() method exists', 'Missing method');
+  if (typeof figma.getImages === 'function') pass('Figma: getImages() method exists');
+  else fail('Figma: getImages() method exists', 'Missing method');
   
   const linear = new LinearIntegration({ apiKey: 'test-key' });
   pass('Linear: isConfigured() works');

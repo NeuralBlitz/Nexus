@@ -43,9 +43,14 @@ async function testClass(name, testFn) {
     const summary = results.integrations[name];
     console.log(`   📊 ${summary.passed}/${summary.tests} tests passed (${duration}ms)`);
   } catch (error) {
+    const summary = results.integrations[name];
+    const message = error instanceof Error ? error.message : String(error);
+    summary.tests++;
+    summary.failed++;
     results.failed++;
-    results.errors.push({ integration: name, error: error.message });
-    console.log(`   ❌ CRITICAL: ${error.message}`);
+    summary.details.push({ detail: 'Unhandled exception', status: 'FAIL', error: message });
+    results.errors.push({ integration: name, detail: 'Unhandled exception', error: message });
+    console.log(`   ❌ CRITICAL: ${message}`);
   }
 }
 
@@ -995,8 +1000,11 @@ if (results.errors.length > 0) {
 
 console.log('╚════════════════════════════════════════════════════════════════════════╝');
 
-if (results.failed === 0) {
-  console.log('\n🎉 All integrations passed! NEXUS Platform v2.0 is fully functional.\n');
+if (totalTests === 0) {
+  console.log('\n⚠️  No integration checks executed.\n');
+  process.exitCode = 1;
+} else if (results.failed === 0) {
+  console.log('\n🎉 All recorded integration checks passed.\n');
 } else {
   console.log(`\n⚠️  ${results.failed} test(s) failed.\n`);
   // Make reported integration failures observable to CI and callers.
